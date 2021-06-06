@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "662504247548",
+    "project_id": "weatherable-25bce",
+    "storage_bucket": "weatherable-25bce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662504247548:android:c296a6b5dca94cdcb30779",
+        "android_client_info": {
+          "package_name": "kr.ac.kumoh.s20170998.weatherable"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662504247548-7571ff7qpkb80i886cmcsjana3gst0g0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.ac.kumoh.s20170998.weatherable",
+            "certificate_hash": "13f5064b963e3fd81fa42da198a8df72b08efb3f"
+          }
+        },
+        {
+          "client_id": "662504247548-ca6nahjt2omiq8ekmv6feo1mpjc39b5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSMLRHShmcM8iD4G_F7bFEKW3N1spdw2k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662504247548-ca6nahjt2omiq8ekmv6feo1mpjc39b5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
