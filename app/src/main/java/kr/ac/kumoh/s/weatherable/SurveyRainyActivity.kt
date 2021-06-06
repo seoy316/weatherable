@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s20170998.weatherable
+package kr.ac.kumoh.s.weatherable
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_survey_rainy.*
 import kotlinx.android.synthetic.main.item_survey_sunny.*
-import kr.ac.kumoh.s20170998.weatherable.R
+import kr.ac.kumoh.s.weatherable.R
 
 
 class SurveyRainyActivity : AppCompatActivity() {

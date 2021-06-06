@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s20170998.weatherable
+package kr.ac.kumoh.s.weatherable
 
 import android.app.Application
 import android.widget.Toast
@@ -12,38 +12,36 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URLEncoder
 
-class SurveyRainyViewModel(application: Application) : AndroidViewModel(application) {
+class SurveySunnyViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
         const val SERVER_URL = "http://192.168.228.250:8080"
-        // "http://192.168.200.176:8080"
-        // http://192.168.0.11:8080
     }
 
-    data class SurveyRainy(var name: String, var image: String)
+    data class SurveySunny(var name: String, var image: String)
 
     private var mQueue: RequestQueue
     var mLoader: ImageLoader
-    val survey_rainy_list = MutableLiveData<ArrayList<SurveyRainy>>()
-    private val survey_rainy_data = ArrayList<SurveyRainy>()
+    val survey_sunny_list = MutableLiveData<ArrayList<SurveySunny>>()
+    private val survey_sunny_data = ArrayList<SurveySunny>()
     init {
-        survey_rainy_list.value = survey_rainy_data
+        survey_sunny_list.value = survey_sunny_data
         mQueue = MySingleton.getInstance(application).requestQueue
         mLoader = MySingleton.getInstance(application).imageLoader
-        requestSurveyRainy()
+        requestSurveySunny()
     }
 
-    fun getImageUrl(i: Int): String = "$SERVER_URL/image/" + URLEncoder.encode(survey_rainy_data[i].image, "utf-8")
+    fun getImageUrl(i: Int): String = "$SERVER_URL/image/" + URLEncoder.encode(survey_sunny_data[i].image, "utf-8")
 
-    fun requestSurveyRainy() {
+    fun requestSurveySunny() {
         val request = JsonArrayRequest(
             Request.Method.GET,
-            SERVER_URL+"/rainy", // SERVER_URL에 테이블 이름을 붙여준다.
+            SERVER_URL+"/sunny", // SERVER_URL에 테이블 이름을 붙여준다.
             null,
             {
-                survey_rainy_data.clear()
+                survey_sunny_data.clear()
                 parseJson(it)
-                survey_rainy_list.value = survey_rainy_data
+                survey_sunny_list.value = survey_sunny_data
             },
             { Toast.makeText(getApplication(), it.toString(), Toast.LENGTH_LONG).show() }
         )
@@ -52,9 +50,9 @@ class SurveyRainyViewModel(application: Application) : AndroidViewModel(applicat
         mQueue.add(request)
     }
 
-    fun getSurveyRainy(i: Int) = survey_rainy_data[i]
+    fun getSurveySunny(i: Int) = survey_sunny_data[i]
 
-    fun getSize() = survey_rainy_data.size
+    fun getSize() = survey_sunny_data.size
 
     override fun onCleared() {
         super.onCleared()
@@ -67,7 +65,7 @@ class SurveyRainyViewModel(application: Application) : AndroidViewModel(applicat
             val name = item.getString("name")
             val image = item.getString("image")
 
-            survey_rainy_data.add(SurveyRainy(name, image))
+            survey_sunny_data.add(SurveySunny(name, image))
         }
     }
 }

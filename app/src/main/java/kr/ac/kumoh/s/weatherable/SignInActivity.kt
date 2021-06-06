@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s20170998.weatherable
+package kr.ac.kumoh.s.weatherable
 
 
 import android.content.Intent

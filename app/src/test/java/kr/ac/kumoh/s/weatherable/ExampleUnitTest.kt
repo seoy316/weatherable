@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s20171145.weatherable
+package kr.ac.kumoh.s.weatherable
 
 import org.junit.Test
 

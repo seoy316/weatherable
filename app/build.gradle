@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "kr.ac.kumoh.s20170998.weatherable"
+        applicationId "kr.ac.kumoh.s.weatherable"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
