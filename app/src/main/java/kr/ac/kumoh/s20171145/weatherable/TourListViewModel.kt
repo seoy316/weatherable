@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.DecimalFormat
 
 class TourListViewModel(application: Application): AndroidViewModel(application) {
 
@@ -19,7 +20,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
         const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io/"
     }
 
-    data class TourList(var name: String, var address: String)
+    data class TourList(var name: String, var address: String, var distance: String)
 
     private var mQueue: RequestQueue
     val tour_list = MutableLiveData<ArrayList<TourList>>()
@@ -28,26 +29,6 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
     init {
         mQueue = MySingleton.getInstance(application).requestQueue
     }
-
-//    fun getJSON() {
-//        val request = JsonArrayRequest(
-//            Request.Method.GET,
-//            SERVER_URL,
-//            null,
-//            {
-//                list_data.clear()
-//                parseJson(it)
-//                tour_list.value = list_data
-//            },
-//            {
-//                Toast.makeText(getApplication(), it.toString(), Toast.LENGTH_SHORT).show()
-//            }
-//
-//        )
-//
-//        request.tag = QUEUE_TAG
-//        mQueue.add(request)
-//    }
 
     fun postJSON(x: Double?, y:Double?) {
         list_data.clear()
@@ -58,15 +39,18 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
                 try {
                     println("연결 성공")
                     val jsonObject = JSONArray(response)
+                    val dec = DecimalFormat("#.##")
                     for (i in 0 until jsonObject.length()){
                         val item:JSONObject = jsonObject[i] as JSONObject
                         val name = item.getString("name")
                         val address = item.getString("address")
+                        val distance = dec.format(item.getDouble("dist")) + "km"
 
                         println("test_name : $name")
                         println("test_adress : $address")
+                        println("test_distance : $distance")
 
-                        list_data.add(TourList(name, address))
+                        list_data.add(TourList(name, address, distance))
                         tour_list.value = list_data
                     }
 
@@ -97,13 +81,14 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
         mQueue.cancelAll(QUEUE_TAG)
     }
 
-    private fun parseJson(items: JSONArray) {
-        for (i in 0 until items.length()) {
-            val item: JSONObject = items[i] as JSONObject
-            val name = item.getString("name")
-            val address = item.getString("address")
-
-            list_data.add(TourList(name, address))
-        }
-    }
+//    private fun parseJson(items: JSONArray) {
+//        for (i in 0 until items.length()) {
+//            val item: JSONObject = items[i] as JSONObject
+//            val name = item.getString("name")
+//            val address = item.getString("address")
+//            val distance = item.getString("dist")
+//
+//            list_data.add(TourList(name, address))
+//        }
+//    }
 }

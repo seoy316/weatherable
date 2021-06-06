@@ -79,10 +79,12 @@ class TourListFragment : BottomSheetDialogFragment() {
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val txName: TextView
             val txAddress: TextView
+            val txDistance: TextView
 
             init {
                 txName = itemView.findViewById(R.id.place_name)
                 txAddress = itemView.findViewById(R.id.place_address)
+                txDistance = itemView.findViewById(R.id.place_dist)
             }
         }
 
@@ -104,6 +106,7 @@ class TourListFragment : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.txName.text = mTourListModel.getTourList(position).name
             holder.txAddress.text = mTourListModel.getTourList(position).address
+            holder.txDistance.text = mTourListModel.getTourList(position).distance
         }
     }
 }
