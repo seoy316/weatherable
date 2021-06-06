@@ -16,9 +16,6 @@ class SurveySunnyViewModel(application: Application) : AndroidViewModel(applicat
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
         const val SERVER_URL = "http://192.168.228.250:8080"
-        // "http://192.168.200.176:8080"
-        // "http://192.168.228.250:8080"
-        // "http://192.168.0.11:8080"
     }
 
     data class SurveySunny(var name: String, var image: String)
