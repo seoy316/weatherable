@@ -8,6 +8,7 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
+import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -25,6 +26,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
     private var mQueue: RequestQueue
     val tour_list = MutableLiveData<ArrayList<TourList>>()
     private val list_data = ArrayList<TourList>()
+
 
     init {
         mQueue = MySingleton.getInstance(application).requestQueue
@@ -65,7 +67,9 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
                 val params = HashMap<String, String>()
                 params.put("x",x.toString())
                 params.put("y",y.toString())
+                params.put("weatherCode", weatherCode.toString())
                 print("params $params")
+
                 return params
             }
         }
