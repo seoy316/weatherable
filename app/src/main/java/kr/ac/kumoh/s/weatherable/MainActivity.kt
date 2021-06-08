@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -18,6 +20,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import kotlinx.android.synthetic.main.fragment_tour_list.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -34,9 +37,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private var strDate: String? = null
     lateinit var viewModel: TourListViewModel
 
-
     var lon_ : Double = 0.0 // 경도
     var lat_ : Double = 0.0// 위도
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         val fragmentTourList = TourListFragment.newInstance("TourListFragment")
         val fabPlaceList = findViewById<ExtendedFloatingActionButton>(R.id.fabPlaceList)
+//        val rvTourList = findViewById<RecyclerView>(R.id.rvTourList)
+
 
         viewModel = ViewModelProvider(this).get(TourListViewModel::class.java)
 
@@ -174,24 +179,31 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     when (strDescWeather) {
                         "broken clouds", "overcast clouds", "scattered clouds", "few clouds" -> {
                             txt_weather.text = "흐림"
+                            weatherCode = 2
                         }
                         "light rain" -> {
                             txt_weather.text = "약한 비"
+                            weatherCode = 3
                         }
                         "haze" -> {
                             txt_weather.text = "안개"
+                            weatherCode = 2
                         }
                         "moderate rain" -> {
                             txt_weather.text = "흐리고 비"
+                            weatherCode = 3
                         }
                         "heavy intensity rain" -> {
                             txt_weather.text = "폭우"
+                            weatherCode = 3
                         }
                         "clear sky" -> {
                             txt_weather.text = "맑음"
+                            weatherCode = 1
                         }
                         else -> {
                             txt_weather.text = strWeather
+                            weatherCode = 2
                         }
                     }
 
@@ -219,6 +231,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     companion object {
         var requestQueue: RequestQueue? = null
+        var weatherCode: Int = 0
     }
 
     override fun onLocationChanged(location: Location) {

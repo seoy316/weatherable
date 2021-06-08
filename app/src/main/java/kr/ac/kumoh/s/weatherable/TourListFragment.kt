@@ -12,13 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.fragment_tour_list.view.*
 
 
 class TourListFragment : BottomSheetDialogFragment() {
     private lateinit var mTourListModel: TourListViewModel
     private val mTourListAdapter = TourListAdapter()
+    var tour_list : ShimmerRecyclerView? = null
     var fabClose: FloatingActionButton? = null
     var x : Double? =  0.0// 경도
     var y : Double? = 0.0// 위도
@@ -41,15 +44,19 @@ class TourListFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         mTourListModel = ViewModelProvider(activity as AppCompatActivity).get(TourListViewModel::class.java)
         mTourListModel.tour_list.observe(viewLifecycleOwner, Observer<ArrayList<TourListViewModel.TourList>> {mTourListAdapter.notifyDataSetChanged()})
 
 
         val root = inflater.inflate(R.layout.fragment_tour_list, container, false)
-        val rvTourList = root.findViewById<RecyclerView>(R.id.rvTourList)
+        val rvTourList = root.rvTourList
+//        rvTourList?.layoutManager = LinearLayoutManager(activity)
+//        rvTourList?.setHasFixedSize(true)
+//        rvTourList?.adapter = mTourListAdapter
+//        rvTourList?.showShimmerAdapter()
+
         rvTourList.apply {
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
