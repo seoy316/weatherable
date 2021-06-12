@@ -30,6 +30,7 @@ class SurveyRainyActivity : AppCompatActivity() {
     private lateinit var email: String
     private lateinit var name: String
     private val tid_list = arrayListOf<Int>()
+    private var rating = arrayListOf<Int?>(null, null, null, null, null, null, null, null, null)
 
     companion object {
         var requestQueue: RequestQueue? = null
