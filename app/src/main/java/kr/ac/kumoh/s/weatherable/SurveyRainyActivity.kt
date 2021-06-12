@@ -1,39 +1,50 @@
 package kr.ac.kumoh.s.weatherable
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.NetworkImageView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_survey_rainy.*
-import kotlinx.android.synthetic.main.item_survey_sunny.*
-import kr.ac.kumoh.s.weatherable.R
 
 
 class SurveyRainyActivity : AppCompatActivity() {
     private lateinit var mSurveyRainyModel: SurveyRainyViewModel
     private val mSurveyRainyAdapter = SurveyRainyAdapter()
+    private lateinit var getData: GetData
 
-    private lateinit var db: FirebaseFirestore
+    private var uid: Int? = null
+    private lateinit var email: String
+
+    companion object {
+        var requestQueue: RequestQueue? = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_survey_rainy)
 
         lsSurveyRainyResult.apply {
-            layoutManager = GridLayoutManager(applicationContext, 3)
+            layoutManager = LinearLayoutManager(applicationContext)
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mSurveyRainyAdapter
+        }
+
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(applicationContext)
         }
 
         mSurveyRainyModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(SurveyRainyViewModel::class.java)
@@ -43,44 +54,24 @@ class SurveyRainyActivity : AppCompatActivity() {
         })
         mSurveyRainyModel.requestSurveyRainy()
 
-        db = FirebaseFirestore.getInstance()
+        getData = GetData()
+
 
         val btn_survey_rainy = findViewById<Button>(R.id.btn_survey_rainy)
         btn_survey_rainy.setOnClickListener {
-            val intent = Intent(this, SurveySunnyActivity::class.java)
-            startActivity(intent)
+            val sunny = Intent(this, SurveySunnyActivity::class.java)
+            startActivity(sunny)
         }
-
     }
 
     inner class SurveyRainyAdapter: RecyclerView.Adapter<SurveyRainyAdapter.ViewHolder>() {
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), AdapterView.OnItemSelectedListener  {
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
             val txName: TextView
-            val niImage: NetworkImageView = itemView.findViewById<NetworkImageView>(R.id.ni_survey_rainy) // NetWorkImageView를 사용하여 이미지를 보여준다.
-            val spn_rainy: Spinner
+            val rgRainy: RadioGroup
 
             init {
                 txName = itemView.findViewById<TextView>(R.id.tx_survey_rainy_name)
-                niImage.setDefaultImageResId(R.id.ni_survey_rainy)
-                spn_rainy = itemView.findViewById<Spinner>(R.id.spn_rainy)
-
-                ArrayAdapter.createFromResource(
-                        this@SurveyRainyActivity,
-                        R.array.spn_items,
-                        android.R.layout.simple_spinner_item
-                ).also { adapter ->
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spn_rainy.adapter = adapter
-                }
-
-                spn_rainy.onItemSelectedListener = this
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+                rgRainy = itemView.findViewById<RadioGroup>(R.id.rg_survey_rainy)
             }
         }
 
@@ -98,8 +89,70 @@ class SurveyRainyActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: SurveyRainyAdapter.ViewHolder, position: Int) {
             holder.txName.text = mSurveyRainyModel.getSurveyRainy(position).name
-            holder.niImage.setImageUrl(mSurveyRainyModel.getImageUrl(position), mSurveyRainyModel.mLoader)
         }
+
     }
 
+    fun onRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            // Is the button now checked?
+            val checked = view.isChecked
+
+            // Check which radio button was clicked
+            when (view.getId()) {
+                R.id.radio_item1 ->
+                    if (checked) {
+                        for(i in 0 until getData.getUserSize()) {
+                            email = intent.getStringExtra("email").toString()
+//                            email = "20171145@kumoh.ac.kr"
+                            if (email == getData.getUser(i).email) {
+                                uid = getData.getUser(i).id
+                            }
+                        }
+                        Log.i("d", "userid$uid")
+                    }
+                R.id.radio_item2 ->
+                    if (checked) {
+                        for(i in 0 until getData.getUserSize()) {
+                            email = intent.getStringExtra("email").toString()
+                            if (email == getData.getUser(i).email) {
+                                uid = getData.getUser(i).id
+                            }
+                        }
+                        Log.i("d", "userid$uid")
+                    }
+                R.id.radio_item3 ->
+                    if (checked) {
+                        for(i in 0 until getData.getUserSize()) {
+                            email = intent.getStringExtra("email").toString()
+                            if (email == getData.getUser(i).email) {
+                                uid = getData.getUser(i).id
+                            }
+                        }
+                        Log.i("d", "userid$uid")
+                    }
+                R.id.radio_item4 ->
+                    if (checked) {
+                        for(i in 0 until getData.getUserSize()) {
+                            email = intent.getStringExtra("email").toString()
+                            if (email == getData.getUser(i).email) {
+                                uid = getData.getUser(i).id
+                            }
+                        }
+                        Log.i("d", "userid$uid")
+                    }
+                R.id.radio_item5 ->
+                    if (checked) {
+                        for(i in 0 until getData.getUserSize()) {
+//                                    email = intent. getStringExtra("email").toString()
+                            if (getData.getUser(i).email == email) {
+                                uid = getData.getUser(i).id
+                                Log.i("d", "userid$uid")
+                            }
+                        }
+//                                Log.i("d", "userid$uid")
+                    }
+            }
+        }
+    }
 }
