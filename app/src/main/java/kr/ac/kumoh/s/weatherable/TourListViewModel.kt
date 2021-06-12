@@ -85,14 +85,4 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
         mQueue.cancelAll(QUEUE_TAG)
     }
 
-//    private fun parseJson(items: JSONArray) {
-//        for (i in 0 until items.length()) {
-//            val item: JSONObject = items[i] as JSONObject
-//            val name = item.getString("name")
-//            val address = item.getString("address")
-//            val distance = item.getString("dist")
-//
-//            list_data.add(TourList(name, address))
-//        }
-//    }
 }
