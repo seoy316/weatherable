@@ -8,7 +8,7 @@ import org.json.JSONException
 class SetData() {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "http://flask-weatherable-wkrtj.run.goorm.io/user"
+        const val SERVER_URL = "http://192.168.0.11:8080"
     }
 
 //    private val mQueue: RequestQueue
@@ -19,7 +19,7 @@ class SetData() {
     fun postUser(email: String) {
         val request: StringRequest = object : StringRequest(
             Method.POST,
-            SERVER_URL,
+            "$SERVER_URL/user",
             Response.Listener { response ->
                 try {
                 } catch (e: JSONException) {
@@ -41,10 +41,10 @@ class SetData() {
         SignInActivity.requestQueue!!.add(request)
     }
 
-    fun postRate(uid: Int, tid: Int, weather: Int, rating: Int) {
+    fun postRate(uid: Int?, tid: ArrayList<Int>, weather: Int, rating: ArrayList<Int?>) {
         val request: StringRequest = object : StringRequest(
             Method.POST,
-            SERVER_URL,
+            "$SERVER_URL/rate",
             Response.Listener { response ->
                 try {
                 } catch (e: JSONException) {
