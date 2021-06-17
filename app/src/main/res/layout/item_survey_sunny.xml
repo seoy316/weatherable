@@ -10,39 +10,43 @@
     app:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:layout_width="100dp"
-        android:layout_height="150dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#fcfcfc"
         android:orientation="vertical"
         android:padding="8dp">
-
-
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/ni_survey_sunny"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tx_survey_sunny_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ni_survey_sunny" />
+            app:layout_constraintRight_toLeftOf="@id/rg_survey_sunny"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Spinner
-            android:id="@+id/spn_sunny"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:padding="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tx_survey_sunny_name"/>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            android:id="@+id/rg_survey_sunny">
+
+            <RadioButton android:id="@+id/radio_item1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton android:id="@+id/radio_item2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton android:id="@+id/radio_item3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton android:id="@+id/radio_item4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton android:id="@+id/radio_item5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

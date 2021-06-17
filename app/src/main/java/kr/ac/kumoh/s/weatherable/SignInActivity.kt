@@ -3,26 +3,23 @@ package kr.ac.kumoh.s.weatherable
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
-import com.android.volley.Response
-import com.android.volley.toolbox.*
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import org.json.JSONException
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+
+    val setData = SetData()
 
     companion object {
         var requestQueue: RequestQueue? = null
@@ -31,8 +28,6 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-
-        requestQueue = Volley.newRequestQueue(applicationContext)
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -46,8 +41,16 @@ class SignInActivity : AppCompatActivity() {
             val password = edt_Password.text.toString().trim()
 
             /* Validate... */
-
             createUser(email, password)
+            setData.postUser(edt_Email.text.toString())
+
+//            val intent = Intent(this, SurveyRainyActivity::class.java)
+//            intent.putExtra("email", email)
+//            startActivity(intent)
+        }
+
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(applicationContext)
         }
     }
 
@@ -70,14 +73,11 @@ class SignInActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show()
                     val user = auth.currentUser
-                    print("email: $email")
-                    postUid(email)
                     updateUI(user)
 
-                    val intent = Intent(this, LogInActivity::class.java)
+                    val intent = Intent(this, SurveyRainyActivity::class.java)
+                    intent.putExtra("email", user!!.email.toString())
                     startActivity(intent)
-
-                    ActivityCompat.finishAffinity(this)
                 } else {
                     Toast.makeText(this, "회원가입 실패", Toast.LENGTH_SHORT).show()
                     updateUI(null)
@@ -92,51 +92,10 @@ class SignInActivity : AppCompatActivity() {
         user?.let {
             val txt_Result = findViewById<TextView>(R.id.txt_Result)
             txt_Result.text = "Email: ${getEmail(user)}\nUid: ${getId(user)}"
-
-            val userHashMap: HashMap<Any, String> = HashMap<Any, String>()
-
-            userHashMap.put("uid", getId(user))
-            userHashMap.put("email", getEmail(user))
-
-            db.collection("user").add(userHashMap)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Log.d("Weatherable", "Document ID = " + it.result)
-                    }
-                }
-                .addOnFailureListener {
-                }
         }
     }
 
-    fun postUid(user: String) {
-        val url = TourListViewModel.SERVER_URL + "user"
-        val request: StringRequest = object : StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    println("연결 성공")
+    fun getEmail(user: FirebaseUser?): String { return user!!.email.toString() }
 
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            },
-            Response.ErrorListener { }) {
-            @Throws(AuthFailureError::class)
-            override fun getParams(): Map<String, String>
-            {
-                val params = HashMap<String, String>()
-                params.put("uid",user)
-                print("params $params")
-                return params
-            }
-        }
-        request.setShouldCache(false)
-        requestQueue?.add(request)
-    }
-
-    private fun getEmail(user: FirebaseUser?): String { return user!!.email.toString() }
-
-    private fun getId(user: FirebaseUser?): String { return user!!.uid }
-
+    fun getId(user: FirebaseUser): String { return user.uid }
 }
