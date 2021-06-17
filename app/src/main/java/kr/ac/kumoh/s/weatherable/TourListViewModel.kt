@@ -9,6 +9,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
+import kr.ac.kumoh.s.weatherable.SignInActivity.Companion.requestQueue
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject

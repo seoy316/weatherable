@@ -21,8 +21,6 @@ import kotlinx.android.synthetic.main.fragment_tour_list.view.*
 class TourListFragment : BottomSheetDialogFragment() {
     private lateinit var mTourListModel: TourListViewModel
     private val mTourListAdapter = TourListAdapter()
-    var tour_list : ShimmerRecyclerView? = null
-    var fabClose: FloatingActionButton? = null
     var x : Double? =  0.0// 경도
     var y : Double? = 0.0// 위도
 
@@ -49,13 +47,8 @@ class TourListFragment : BottomSheetDialogFragment() {
         mTourListModel = ViewModelProvider(activity as AppCompatActivity).get(TourListViewModel::class.java)
         mTourListModel.tour_list.observe(viewLifecycleOwner, Observer<ArrayList<TourListViewModel.TourList>> {mTourListAdapter.notifyDataSetChanged()})
 
-
         val root = inflater.inflate(R.layout.fragment_tour_list, container, false)
         val rvTourList = root.rvTourList
-//        rvTourList?.layoutManager = LinearLayoutManager(activity)
-//        rvTourList?.setHasFixedSize(true)
-//        rvTourList?.adapter = mTourListAdapter
-//        rvTourList?.showShimmerAdapter()
 
         rvTourList.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -64,10 +57,10 @@ class TourListFragment : BottomSheetDialogFragment() {
             adapter = mTourListAdapter
         }
 
-        fabClose = root.findViewById(R.id.fabClose)
-        fabClose?.setOnClickListener {
-            dismiss()
-        }
+//        fabClose = root.findViewById(R.id.fabClose)
+//        fabClose?.setOnClickListener {
+//            dismiss()
+//        }
 
         var bundle = this.arguments
         if (bundle != null) {
@@ -106,7 +99,6 @@ class TourListFragment : BottomSheetDialogFragment() {
                     parent,
                     false
                 )
-
             return ViewHolder(view)
         }
 
