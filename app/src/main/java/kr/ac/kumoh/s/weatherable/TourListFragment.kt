@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s.weatherable
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -106,6 +108,16 @@ class TourListFragment : BottomSheetDialogFragment() {
             holder.txName.text = mTourListModel.getTourList(position).name
             holder.txAddress.text = mTourListModel.getTourList(position).address
             holder.txDistance.text = mTourListModel.getTourList(position).distance
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(holder.itemView?.context, MapsActivity::class.java)
+                intent.putExtra("tour_x",mTourListModel.getTourList(position).tour_x)
+                intent.putExtra("tour_y",mTourListModel.getTourList(position).tour_y)
+                intent.putExtra("my_x",x)
+                intent.putExtra("my_y",y)
+                intent.putExtra("name",mTourListModel.getTourList(position).name)
+                ContextCompat.startActivity(holder.itemView.context, intent, null)
+            }
         }
     }
 }

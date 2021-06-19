@@ -1,6 +1,7 @@
 package kr.ac.kumoh.s.weatherable.navigation
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +13,12 @@ import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -24,6 +30,7 @@ import kr.ac.kumoh.s.weatherable.MainActivity
 import kr.ac.kumoh.s.weatherable.MySingleton
 import org.json.JSONException
 import org.json.JSONObject
+import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,6 +41,16 @@ class AddPhotoActivity : AppCompatActivity() {
     var auth : FirebaseAuth? = null
     var firestore : FirebaseFirestore? = null
     var starRating : Float? = null
+    var InputAddress : String? = null
+    var place_name_ : String? = null
+    var address_:String? = null
+    var x_:String? = null
+    var y_:String? = null
+    /////크롤링 변수
+    var tag_text:String? = null
+    var tag_list = listOf<String>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +71,83 @@ class AddPhotoActivity : AppCompatActivity() {
             starRating = rating
         }
 
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, "AIzaSyBBVbfSUh3_IYI2C3-prNbb9XRZj9LNF7A")
+        }
+        val autocompleteFragment =
+            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+                    as AutocompleteSupportFragment
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG))
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                // TODO: Get info about the selected place.
+                place_name_ = place.name
+                address_ = place.address
+                y_ = place.latLng!!.latitude.toString()
+                x_= place.latLng!!.longitude.toString()
+                tagcrawling() ///// 크롤링 실행
+
+                Log.i(ContentValues.TAG, "Place: ${place_name_}, ${address_}, ${x_}, ${y_}")
+            }
+
+            override fun onError(status: Status) {
+                // TODO: Handle the error.
+                Log.i(ContentValues.TAG, "An error occurred: $status")
+            }
+        })
+
         //add image upload event
         addphoto_btn_upload.setOnClickListener {
             contentUpload()
-            uploadRating()
+//            InputAddress = add_edit_review.text.toString()
+//            uploadRating()
+            postJSON()
+            print("입력테스트 $InputAddress")
             print("평점 : ${starRating}")
         }
 
     }
+
+//    크롤링하는거
+    fun tagcrawling(){
+        Thread(Runnable {
+            val url = "https://m.search.naver.com/search.naver?sm=mtp_sly.hst&where=m&query=$place_name_&acr=1"
+            val doc = Jsoup.connect(url).get()
+            val tag_1 = doc.select("span[class=_3ocDE]")
+            val tag_2 = doc.select("span[class= kAdc3]")
+            val tag_3 = doc.select("span[class=_3Qp1c]")
+
+            if (tag_1.isEmpty())
+            {
+                if (tag_2.isEmpty())
+                {
+                    if(tag_3.isEmpty())
+                        tag_text = "기타"
+
+                    else
+                        tag_text = tag_3[0].text()
+                }
+                else
+                    tag_text = tag_2[0].text()
+            }
+            else
+                tag_text = tag_1[0].text()
+
+            tag_list = tag_text?.split(",")!!
+
+            if (tag_list[0] == "보물" || tag_list[0] == "문화")
+                tag_text = "문화재"
+            else if (tag_list[0] == "도시")
+                tag_text = "공원"
+            else
+                tag_text = tag_list[0]
+        }).start()
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -113,38 +199,9 @@ class AddPhotoActivity : AppCompatActivity() {
 
             finish()
         }
-
-        /*//Callback method
-        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
-            storageRef.downloadUrl.addOnSuccessListener { uri ->
-                var contentDTO = ContentDTO()
-
-                //Insert downloadUrl of image
-                contentDTO.imageUrl = uri.toString()
-
-                //Insert uid of user
-                contentDTO.uid = auth?.currentUser?.uid
-
-                //Insert userId
-                contentDTO.userId = auth?.currentUser?.email
-
-                //Insert explain of content
-                contentDTO.explain = addphoto_edit_explain.text.toString()
-
-                //Insert timestamp
-                contentDTO.timestamp = System.currentTimeMillis()
-
-                firestore?.collection("images")?.document()?.set(contentDTO)
-
-                setResult(Activity.RESULT_OK)
-
-                finish()
-            }
-        }*/
     }
 
     companion object {
-        const val QUEUE_TAG = "VolleyRequest"
         const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io/"
     }
 
@@ -167,6 +224,38 @@ class AddPhotoActivity : AppCompatActivity() {
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
                 params.put("rating", starRating.toString())
+                params.put("address", InputAddress.toString())
+                print("params $params")
+                return params
+            }
+        }
+        request.setShouldCache(false)
+        MainActivity.requestQueue!!.add(request)
+    }
+
+    private fun postJSON() {
+        val url = SERVER_URL + "send_review"
+        val request: StringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    println("연결 성공")
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            Response.ErrorListener { }) {
+            @Throws(AuthFailureError::class)
+            override fun getParams(): Map<String, String>
+            {
+                val params = HashMap<String, String>()
+                params.put("rating", starRating.toString())
+                params.put("name",place_name_.toString())
+                params.put("address",address_.toString())
+                params.put("x",x_.toString())
+                params.put("y",y_.toString())
+                params.put("tag", tag_text.toString())
                 print("params $params")
                 return params
             }

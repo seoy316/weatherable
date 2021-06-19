@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_weight="1"
@@ -10,46 +9,40 @@
     app:cardCornerRadius="8dp"
     app:cardUseCompatPadding="true">
 
-    <RadioGroup
-        android:id="@+id/rg_survey_sunny"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="10dp" >
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:background="#fcfcfc"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/ni_survey_sunny"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tx_survey_sunny_name"
-            android:layout_width="70dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ni_survey_sunny" />
+
+        <Spinner
+            android:id="@+id/spn_sunny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:padding="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/radio_item1"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tx_survey_sunny_name"/>
 
-        <RadioButton android:id="@+id/radio_item1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1점" />
-
-        <RadioButton android:id="@+id/radio_item2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2점" />
-
-        <RadioButton android:id="@+id/radio_item3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3점" />
-
-        <RadioButton android:id="@+id/radio_item4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4점" />
-
-        <RadioButton android:id="@+id/radio_item5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5점" />
-    </RadioGroup>
-
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

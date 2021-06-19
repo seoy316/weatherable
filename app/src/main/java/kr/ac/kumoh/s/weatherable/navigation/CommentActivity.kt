@@ -55,6 +55,7 @@ class CommentActivity : AppCompatActivity() {
         var msg = FirebaseAuth.getInstance().currentUser?.email + " " + getString(R.string.alarm_comment) + " of " + message
         FcmPush.instance.sendMessage(destinationUid,"Howlstagram",msg)
     }
+
     inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
         var comments : ArrayList<ContentDTO.Comment> = arrayListOf()

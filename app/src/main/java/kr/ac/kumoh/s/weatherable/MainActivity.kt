@@ -119,7 +119,9 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
             }
             R.id.action_search ->{
                 var gridFragment = GridFragment()
+//                var detailFragment = DetailViewFragment()
                 supportFragmentManager.beginTransaction().replace(R.id.main_content,gridFragment).commit()
+//                supportFragmentManager.beginTransaction().replace(R.id.main_content,detailFragment).commit()
                 return true
             }
             R.id.action_add_photo ->{

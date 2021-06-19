@@ -22,7 +22,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
         const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io/"
     }
 
-    data class TourList(var name: String, var address: String, var distance: String)
+    data class TourList(var name: String, var address: String, var distance: String, var tour_x: Double, var tour_y: Double)
 
     private var mQueue: RequestQueue
     val tour_list = MutableLiveData<ArrayList<TourList>>()
@@ -42,18 +42,23 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
                 try {
                     println("연결 성공")
                     val jsonObject = JSONArray(response)
+                    print("추천리스트 $jsonObject")
                     val dec = DecimalFormat("#.##")
                     for (i in 0 until jsonObject.length()){
                         val item:JSONObject = jsonObject[i] as JSONObject
                         val name = item.getString("name")
+                        print("name 나와라 " + name)
                         val address = item.getString("address")
                         val distance = dec.format(item.getDouble("dist")) + "km"
+                        val tour_x = item.getDouble("x")
+                        val tour_y = item.getDouble("y")
 
                         println("test_name : $name")
                         println("test_adress : $address")
                         println("test_distance : $distance")
 
-                        list_data.add(TourList(name, address, distance))
+                        list_data.add(TourList(name, address, distance,tour_x,tour_y))
+                        print("list check" + list_data)
                         tour_list.value = list_data
                     }
 

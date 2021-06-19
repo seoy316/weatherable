@@ -23,7 +23,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_alarm.view.*
 import kr.ac.kumoh.s.weatherable.MainActivity
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.requestQueue
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
