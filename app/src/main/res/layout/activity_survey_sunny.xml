@@ -1,27 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SurveySunnyActivity">
+    tools:context=".SurveySunnyActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_sunny"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/sunny"
+        android:layout_gravity="center"
+        app:layout_constraintRight_toLeftOf="@id/txt_sunny"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_survey_sunny" />
+
+    <TextView
+        android:id="@+id/txt_sunny"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="맑을 경우 장소에 따라 선호도 점수를 매겨주세요."
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_survey_sunny" />
+
+    <Button
+        android:id="@+id/btn_survey_sunny"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="결과 제출"
+        android:textSize="15sp"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lsSurveySunnyResult" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lsSurveySunnyResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="4dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_survey_sunny" />
+        app:layout_constraintTop_toBottomOf="@id/btn_survey_sunny" />
 
-    <Button
-        android:id="@+id/btn_survey_sunny"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="완료"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lsSurveySunnyResult" />
+    <!--    <Button-->
+    <!--        android:id="@+id/btn_survey_rainy"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="다음"-->
+    <!--        app:layout_constraintHorizontal_bias="1.0"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintRight_toRightOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/lsSurveyRainyResult" />-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:662504247548:android:c296a6b5dca94cdcb30779",
         "android_client_info": {
-          "package_name": "kr.ac.kumoh.s.weatherable"
+          "package_name": "kr.ac.kumoh.s20171145.weatherable"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "662504247548-7571ff7qpkb80i886cmcsjana3gst0g0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "kr.ac.kumoh.s.weatherable",
+            "package_name": "kr.ac.kumoh.s20171145.weatherable",
             "certificate_hash": "13f5064b963e3fd81fa42da198a8df72b08efb3f"
           }
         },

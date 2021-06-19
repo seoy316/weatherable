@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/tx_survey_rainy_name"
-            android:layout_width="50dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -29,32 +29,27 @@
         <RadioButton android:id="@+id/radio_item1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1점"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="1점" />
 
         <RadioButton android:id="@+id/radio_item2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2점"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="2점" />
 
         <RadioButton android:id="@+id/radio_item3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3점"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="3점" />
 
         <RadioButton android:id="@+id/radio_item4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4점"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="4점" />
 
         <RadioButton android:id="@+id/radio_item5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5점"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="5점" />
     </RadioGroup>
 
 </androidx.cardview.widget.CardView>
