@@ -27,6 +27,8 @@ import kr.ac.kumoh.s.weatherable.R
 import kr.ac.kumoh.s.weatherable.navigation.model.ContentDTO
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import kr.ac.kumoh.s.weatherable.MainActivity
+import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
+import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
 import kr.ac.kumoh.s.weatherable.MySingleton
 import org.json.JSONException
 import org.json.JSONObject
@@ -50,6 +52,13 @@ class AddPhotoActivity : AppCompatActivity() {
     var tag_text:String? = null
     var tag_list = listOf<String>()
 
+    var image : String? = null
+    var postId: String? = null
+    var time_: String? = null
+    var content : String? = null
+    var uid: String? = null
+    var weather : String? = null
+    var place : String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +69,8 @@ class AddPhotoActivity : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+
+        uid = auth?.currentUser?.uid
 
         //Open the album
         var photoPickerIntent = Intent(Intent.ACTION_PICK)
@@ -105,11 +116,12 @@ class AddPhotoActivity : AppCompatActivity() {
             contentUpload()
 //            InputAddress = add_edit_review.text.toString()
 //            uploadRating()
+            content = addphoto_edit_explain.text.toString()
             postJSON()
+
             print("입력테스트 $InputAddress")
             print("평점 : ${starRating}")
         }
-
     }
 
 //    크롤링하는거
@@ -170,45 +182,29 @@ class AddPhotoActivity : AppCompatActivity() {
         var timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         var imageFileName = "IMAGE_" + timestamp + "_.png"
 
-        var storageRef = storage?.reference?.child("images")?.child(imageFileName)
+//        var storageRef = storage?.reference?.child("images")?.child(imageFileName)
+        var storageRef = storage?.reference?.child("img")?.child(imageFileName)
 
         //Promise method
         storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
             return@continueWithTask storageRef.downloadUrl
         }?.addOnSuccessListener { uri ->
+            image = uri.toString()
+
             var contentDTO = ContentDTO()
-
-            //Insert downloadUrl of image
+//            //Insert downloadUrl of image
             contentDTO.imageUrl = uri.toString()
+            firestore?.collection("img")?.document()?.set(contentDTO)
 
-            //Insert uid of user
-            contentDTO.uid = auth?.currentUser?.uid
+            uploadPosting()
 
-            //Insert userId
-            contentDTO.userId = auth?.currentUser?.email
-
-            //Insert explain of content
-            contentDTO.explain = addphoto_edit_explain.text.toString()
-
-            //Insert timestamp
-            contentDTO.timestamp = System.currentTimeMillis()
-
-            firestore?.collection("images")?.document()?.set(contentDTO)
-
-            setResult(Activity.RESULT_OK)
-
-            finish()
         }
     }
 
-    companion object {
-        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io/"
-    }
-
-    private fun uploadRating() {
+    private fun uploadPosting() {
 
         val request: StringRequest = object : StringRequest(
-            Method.POST, SERVER_URL + "rate",
+            Method.POST, "$SERVER_URL/reviews_post",
             Response.Listener { response ->
                 try {
                     println("연결 성공")
@@ -223,14 +219,24 @@ class AddPhotoActivity : AppCompatActivity() {
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
-                params.put("rating", starRating.toString())
-                params.put("address", InputAddress.toString())
+
+//                params.put("postId", .toString())
+//                params.put("time_", time_.toString())
+                params.put("content", content.toString())
+                params.put("uid", uid.toString())
+                params.put("weather", weatherCode.toString())
+                params.put("place", place_name_.toString())
+                params.put("image", image.toString())
+
                 print("params $params")
                 return params
             }
         }
         request.setShouldCache(false)
         MainActivity.requestQueue!!.add(request)
+
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
     private fun postJSON() {

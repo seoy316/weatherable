@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import org.json.JSONException
+import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
 
 class SignInActivity : AppCompatActivity() {
 
@@ -110,7 +111,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     fun postUid(user: String) {
-        val url = TourListViewModel.SERVER_URL + "user"
+        val url = SERVER_URL + "user"
         val request: StringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->

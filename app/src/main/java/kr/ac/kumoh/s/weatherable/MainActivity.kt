@@ -50,20 +50,30 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
     lateinit var txt_time: TextView
     private var strDate: String? = null
     lateinit var viewModel: TourListViewModel
-//    var homeFragment = HomeFragment()
 
     var lon_ : Double = 0.0 // 경도
     var lat_ : Double = 0.0// 위도
 
+    var storage : FirebaseStorage? = null
+    var auth : FirebaseAuth? = null
+
+
     companion object {
         var requestQueue: RequestQueue? = null
         var weatherCode: Int = 0
+        var weatherString: String? = null
+//        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
+        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io"
+        var uid: String? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 //        homeFragment = supportFragmentManager.findFragmentById(R.id.id_home_fragment) as HomeFragment
+
+        auth = FirebaseAuth.getInstance()
+        uid = auth?.currentUser?.uid
 
         txt_date = findViewById(R.id.txt_date)
         txt_time = findViewById(R.id.txt_time)
@@ -284,34 +294,41 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
                     Log.i("txt_weather", jsonObject.toString())
                     when (strDescWeather) {
-                        "broken clouds", "overcast clouds", "scattered clouds", "few clouds" -> {
+                        "broken clouds", "overcast clouds", "scattered clouds" -> {
                             txt_weather.text = "흐림"
 //                            homeFragment.setWeather("흐림")
                             weatherCode = 2
+                            weatherString = "흐림"
                         }
                         "light rain" -> {
                             txt_weather.text = "약한 비"
                             weatherCode = 3
+                            weatherString = "약한 비"
 //                            homeFragment.setWeather("약한 비")
+
                         }
                         "haze" -> {
                             txt_weather.text = "안개"
                             weatherCode = 2
+                            weatherString = "안개"
 //                            homeFragment.setWeather("안개")
                         }
                         "moderate rain" -> {
                             txt_weather.text = "흐리고 비"
                             weatherCode = 3
+                            weatherString ="흐리고 비"
 //                            homeFragment.setWeather("흐리고 비")
                         }
                         "heavy intensity rain" -> {
                             txt_weather.text = "폭우"
                             weatherCode = 3
+                            weatherString = "폭우"
 //                            homeFragment.setWeather("폭우")
                         }
-                        "clear sky" -> {
+                        "clear sky", "few clouds" -> {
                             txt_weather.text = "맑음"
                             weatherCode = 1
+
 //                            homeFragment.setWeather("맑음")
                         }
                         else -> {

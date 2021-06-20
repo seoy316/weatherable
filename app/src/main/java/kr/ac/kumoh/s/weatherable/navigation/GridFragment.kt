@@ -1,135 +1,106 @@
 package kr.ac.kumoh.s.weatherable.navigation
 
-import DetailActivity
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.os.Bundle
-import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.tasks.OnCompleteListener
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.toolbox.NetworkImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import kr.ac.kumoh.s.weatherable.R
-import kr.ac.kumoh.s.weatherable.navigation.model.ContentDTO
 import kotlinx.android.synthetic.main.fragment_grid.view.*
-import kotlinx.android.synthetic.main.fragment_user.view.*
-import kotlinx.android.synthetic.main.item_detail.view.*
-import kr.ac.kumoh.s.weatherable.LogInActivity
-import kr.ac.kumoh.s.weatherable.MainActivity
-import kr.ac.kumoh.s.weatherable.navigation.model.FollowDTO
+import kr.ac.kumoh.s.weatherable.R
 
 
-class GridFragment : Fragment(){
-    var fragmentView : View? = null
-    var firestore : FirebaseFirestore? = null
-    var uid : String? = null
-    var auth : FirebaseAuth? = null
-    var currentUserUid : String? = null
+class GridFragment : Fragment() {
+    var firestore: FirebaseFirestore? = null
+    var uid: String? = null
+    var auth: FirebaseAuth? = null
+    private lateinit var mModel: DetailViewModel
+    private val mAdapter = DetailAdapter()
 
     companion object {
-        var PICK_PROFILE_FROM_ALBUM = 10
-    }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        fragmentView = LayoutInflater.from(activity).inflate(R.layout.fragment_grid,container,false)
-        uid = arguments?.getString("destinationUid")
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-        currentUserUid = auth?.currentUser?.uid
-
-        if(uid == currentUserUid){
-            //MyPage
-            fragmentView?.account_btn_follow_signout?.text = getString(R.string.signout)
-            fragmentView?.account_btn_follow_signout?.setOnClickListener {
-                activity?.finish()
-                startActivity(Intent(activity, LogInActivity::class.java))
-                auth?.signOut()
-            }
-        }else{
-            //OtherUserPage
-            fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
-            var mainactivity = (activity as MainActivity)
-
-        }
-        fragmentView?.gridfragment_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
-        fragmentView?.gridfragment_recyclerview?.layoutManager = GridLayoutManager(activity!!, 3)
-
-        fragmentView?.account_iv_profile?.setOnClickListener {
-            var photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            activity?.startActivityForResult(photoPickerIntent,PICK_PROFILE_FROM_ALBUM)
-        }
-        return fragmentView
+        const val KEY_ID: String = "review_id"
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
+        mModel = ViewModelProvider(activity as AppCompatActivity).get(DetailViewModel::class.java)
+        mModel.list.observe(viewLifecycleOwner, Observer<ArrayList<DetailViewModel.review>> {
+            mAdapter.notifyDataSetChanged()
+        })
 
+        val root = inflater.inflate(R.layout.fragment_grid, container, false)
+        val lsResult = root.findViewById<RecyclerView>(R.id.gridfragment_recyclerview)
+        lsResult.apply {
+            root?.gridfragment_recyclerview?.layoutManager= GridLayoutManager(activity, 3, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
+            itemAnimator = DefaultItemAnimator()
+            adapter = mAdapter
+        }
 
-    inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-        var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
-        init {
-            firestore?.collection("images")?.whereEqualTo("uid",currentUserUid)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                //Sometimes, This code return null of querySnapshot when it signout
-                if(querySnapshot == null) return@addSnapshotListener
+        return root
+    }
 
-                //Get data
-                for(snapshot in querySnapshot.documents){
-                    contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
-                }
-                notifyDataSetChanged()
+    inner class DetailAdapter : RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
+        open inner class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
+            val niImage: NetworkImageView = itemView.findViewById(R.id.image)
+
+            constructor(itemView: View) : super(itemView) {
+                itemView.setOnClickListener(this)
+                niImage.setDefaultImageResId(R.id.image)
             }
-        }
 
-        override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-            var width = resources.displayMetrics.widthPixels / 3
-
-            var imageview = ImageView(p0.context)
-            imageview.layoutParams = LinearLayoutCompat.LayoutParams(width,width)
-            return CustomViewHolder(imageview)
-        }
-
-        inner class CustomViewHolder(var imageview: ImageView) : RecyclerView.ViewHolder(imageview) {
-
+            override fun onClick(p0: View?) {
+                val detail = Intent(activity, DetailActivity::class.java)
+                detail.putExtra(KEY_ID, mModel.getReview(adapterPosition).postId)
+                print("position? ${mModel.getReview(adapterPosition).postId} ")
+                startActivity(detail)
+            }
         }
 
         override fun getItemCount(): Int {
-            return contentDTOs.size
+            return mModel.getSize()
         }
 
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            var imageview = (holder as CustomViewHolder).imageview
-            Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl).apply(RequestOptions().centerCrop()).into(imageview)
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): DetailAdapter.ViewHolder {
+            val view = layoutInflater.inflate(
+                R.layout.item,
+                parent,
+                false)
 
-            holder.itemView.setOnClickListener {
-                var fragment = DetailViewFragment()
-                var bundle = Bundle()
+
+            return ViewHolder(view)
+        }
+
+        inner class CustomViewHolder(var imageview: ImageView) : DetailAdapter.ViewHolder(imageview) { }
 
 
-                bundle.putString("destinationImg",contentDTOs[position].imageUrl)
-                print("퍼기요" + contentDTOs[position].imageUrl.toString())
+        override fun onBindViewHolder(holder: DetailAdapter.ViewHolder, position: Int) {
+            holder.niImage.setImageUrl(mModel.getImageUrl(position), mModel.mLoader)
 
-                fragment.arguments = bundle
-                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
-            }
+
         }
 
     }
-}
 
+}
 
 

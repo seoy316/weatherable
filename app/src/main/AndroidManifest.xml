@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="kr.ac.kumoh.s.weatherable">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -21,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Weatherable"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".navigation.DetailActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,11 +35,10 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".navigation.GridFragment"
             tools:ignore="Instantiatable" />
-        <activity android:name=".navigation.CommentActivity" />
         <activity android:name=".navigation.AddPhotoActivity" />
         <activity
             android:name=".MySingleton"
@@ -49,6 +47,8 @@
         <activity android:name=".SurveySunnyActivity" /> <!-- <activity android:name=".MainActivity" /> -->
         <activity android:name=".SignInActivity" /> <!-- <activity android:name=".MainActivity" /> -->
         <activity android:name=".LogInActivity" />
+        <activity android:name=".navigation.DetailActivity"
+            tools:ignore="DuplicateActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
