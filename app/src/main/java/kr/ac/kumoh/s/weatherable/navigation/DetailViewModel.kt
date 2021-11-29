@@ -8,7 +8,7 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.StringRequest
-import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
+import kr.ac.kumoh.s.weatherable.MainActivity.Companion.f_uid
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.uid
 import kr.ac.kumoh.s.weatherable.MySingleton
 import org.json.JSONArray
@@ -24,6 +24,7 @@ class DetailViewModel (application: Application) : AndroidViewModel(application)
                       var weather: String, var place: String, var postId: String)
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
     }
 
     private var mQueue: RequestQueue
@@ -47,6 +48,8 @@ class DetailViewModel (application: Application) : AndroidViewModel(application)
             Response.Listener { response ->
                 try {
                     println("연결 성공?")
+                    data.clear()
+
                     val items = JSONArray(response)
                     for (i in 0 until items.length()) {
                         val item: JSONObject = items[i] as JSONObject
@@ -56,10 +59,13 @@ class DetailViewModel (application: Application) : AndroidViewModel(application)
                         val content = item.getString("content")
                         val place = item.getString("place")
                         val postId = item.getString("postId")
-                        println("$place")
+
+                        print("시간아 나와라 $time_ \n")
 
                         data.add(review(content, image, time_, weather, place, postId))
+
                     }
+                    list.value = data
                     println("출력 성공?")
 
                 } catch (e: JSONException) {
@@ -73,7 +79,7 @@ class DetailViewModel (application: Application) : AndroidViewModel(application)
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
 
-                params.put("uid", uid.toString())
+                params.put("uid", f_uid.toString())
                 print("params $params")
                 return params
             }
@@ -99,6 +105,8 @@ class DetailViewModel (application: Application) : AndroidViewModel(application)
             val content = item.getString("content")
             val place = item.getString("place")
             val postId = item.getString("postId")
+
+
 
             data.add(review(content, image, time_, weather, place, postId))
         }

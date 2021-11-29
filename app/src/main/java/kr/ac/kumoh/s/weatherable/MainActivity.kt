@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
     lateinit var txt_time: TextView
     private var strDate: String? = null
     lateinit var viewModel: TourListViewModel
+    lateinit var DviewModel: DetailViewModel
 
     var lon_ : Double = 0.0 // 경도
     var lat_ : Double = 0.0// 위도
@@ -62,9 +63,10 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         var requestQueue: RequestQueue? = null
         var weatherCode: Int = 0
         var weatherString: String? = null
-//        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
-        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io"
-        var uid: String? = null
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
+//        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io"
+        var f_uid: String? = null
+        var uid: String = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 //        homeFragment = supportFragmentManager.findFragmentById(R.id.id_home_fragment) as HomeFragment
 
         auth = FirebaseAuth.getInstance()
-        uid = auth?.currentUser?.uid
+        f_uid = auth?.currentUser?.uid
 
         txt_date = findViewById(R.id.txt_date)
         txt_time = findViewById(R.id.txt_time)
@@ -104,7 +106,7 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         LocationServices.getFusedLocationProviderClient(this)
         getLocation()
 
-        val fragmentTourList = TourListFragment.newInstance("TourListFragment")
+//        val fragmentTourList = TourListFragment.newInstance("TourListFragment")
 //        val fabPlaceList = findViewById<ExtendedFloatingActionButton>(R.id.fabPlaceList)
 //        val rvTourList = findViewById<RecyclerView>(R.id.rvTourList)
 
@@ -114,6 +116,9 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
         bundle.putDouble("x",lon_)
         bundle.putDouble("y",lat_)
+
+        uid = intent.getStringExtra("uid").toString()
+        Log.i("d", "GETUID$uid")
 
         bottom_navigation.selectedItemId = R.id.action_home
         registerPushToken()
@@ -128,10 +133,8 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
                 return true
             }
             R.id.action_search ->{
-                var gridFragment = GridFragment()
-//                var detailFragment = DetailViewFragment()
+                var gridFragment = GridFragment.newInstance("GridFragment")
                 supportFragmentManager.beginTransaction().replace(R.id.main_content,gridFragment).commit()
-//                supportFragmentManager.beginTransaction().replace(R.id.main_content,detailFragment).commit()
                 return true
             }
             R.id.action_add_photo ->{
@@ -147,16 +150,15 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
                 bundle.putDouble("x",lon_)
                 bundle.putDouble("y",lat_)
                 recomFragment.arguments = bundle
-//                var recomFragment = TourListFragment()
                 supportFragmentManager.beginTransaction().replace(R.id.main_content,recomFragment).commit()
                 return true
             }
             R.id.action_account ->{
                 var userFragment = UserFragment()
                 var bundle = Bundle()
-                var uid = FirebaseAuth.getInstance().currentUser?.uid
+                var f_uid = FirebaseAuth.getInstance().currentUser?.uid
 
-                bundle.putString("destinationUid",uid)
+                bundle.putString("destinationUid",f_uid)
                 userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction().replace(R.id.main_content,userFragment).commit()
                 return true
@@ -176,14 +178,14 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
         if(requestCode == UserFragment.PICK_PROFILE_FROM_ALBUM && resultCode == RESULT_OK){
             var imageUri = data?.data
-            var uid = FirebaseAuth.getInstance().currentUser?.uid
-            var storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages").child(uid!!)
+            var f_uid = FirebaseAuth.getInstance().currentUser?.uid
+            var storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages").child(f_uid!!)
             storageRef.putFile(imageUri!!).continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
                 return@continueWithTask storageRef.downloadUrl
             }.addOnSuccessListener { uri ->
                 var map = HashMap<String,Any>()
                 map["image"] = uri.toString()
-                FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
+                FirebaseFirestore.getInstance().collection("profileImages").document(f_uid).set(map)
             }
         }
     }
@@ -192,11 +194,11 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
                 task ->
             val token = task.result?.token
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val f_uid = FirebaseAuth.getInstance().currentUser?.uid
             val map = mutableMapOf<String,Any>()
             map["pushToken"] = token!!
 
-            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+            FirebaseFirestore.getInstance().collection("pushtokens").document(f_uid!!).set(map)
         }
     }
 

@@ -4,27 +4,16 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.Response
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.NetworkImageView
-import com.android.volley.toolbox.StringRequest
-import com.google.firebase.firestore.FirebaseFirestore
-import kr.ac.kumoh.s.weatherable.MainActivity
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
 import kr.ac.kumoh.s.weatherable.MySingleton
 import kr.ac.kumoh.s.weatherable.R
-import kr.ac.kumoh.s.weatherable.navigation.DetailViewFragment
-import kr.ac.kumoh.s.weatherable.navigation.DetailViewModel
-import kr.ac.kumoh.s.weatherable.navigation.GridFragment
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
-import java.net.URLEncoder
-import java.util.HashMap
 
 class DetailActivity: AppCompatActivity() {
 
@@ -41,7 +30,6 @@ class DetailActivity: AppCompatActivity() {
         mQueue = MySingleton.getInstance(application).requestQueue
         mLoader = MySingleton.getInstance(application).imageLoader
         val postId : String? = intent.getStringExtra(GridFragment.KEY_ID)
-//        getReview('"'+ postId.toString() +'"')
         getReview(postId)
         print("id value ${postId.toString()}")
 

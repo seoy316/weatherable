@@ -27,7 +27,6 @@ import kr.ac.kumoh.s.weatherable.R
 import kr.ac.kumoh.s.weatherable.navigation.model.ContentDTO
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import kr.ac.kumoh.s.weatherable.MainActivity
-import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
 import kr.ac.kumoh.s.weatherable.MySingleton
 import org.json.JSONException
@@ -61,6 +60,11 @@ class AddPhotoActivity : AppCompatActivity() {
     var place : String? = null
 
 
+    companion object{
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_photo)
@@ -82,9 +86,17 @@ class AddPhotoActivity : AppCompatActivity() {
             starRating = rating
         }
 
+        // 날씨 선택
+//        rg_weather.setOnCheckedChangeListener { group, checkedId ->
+//            when(checkedId) {
+//                R.id.radio_item1 ->
+//            }
+//        }
+
         if (!Places.isInitialized()) {
             Places.initialize(applicationContext, "AIzaSyBBVbfSUh3_IYI2C3-prNbb9XRZj9LNF7A")
         }
+
         val autocompleteFragment =
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
                     as AutocompleteSupportFragment
@@ -114,13 +126,9 @@ class AddPhotoActivity : AppCompatActivity() {
         //add image upload event
         addphoto_btn_upload.setOnClickListener {
             contentUpload()
-//            InputAddress = add_edit_review.text.toString()
-//            uploadRating()
             content = addphoto_edit_explain.text.toString()
             postJSON()
 
-            print("입력테스트 $InputAddress")
-            print("평점 : ${starRating}")
         }
     }
 
@@ -160,7 +168,6 @@ class AddPhotoActivity : AppCompatActivity() {
         }).start()
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == PICK_IMAGE_FROM_ALBUM){
@@ -190,14 +197,17 @@ class AddPhotoActivity : AppCompatActivity() {
             return@continueWithTask storageRef.downloadUrl
         }?.addOnSuccessListener { uri ->
             image = uri.toString()
+            print("image $image")
 
             var contentDTO = ContentDTO()
 //            //Insert downloadUrl of image
             contentDTO.imageUrl = uri.toString()
             firestore?.collection("img")?.document()?.set(contentDTO)
 
-            uploadPosting()
+            setResult(Activity.RESULT_OK)
+            finish()
 
+            uploadPosting()
         }
     }
 
@@ -234,9 +244,6 @@ class AddPhotoActivity : AppCompatActivity() {
         }
         request.setShouldCache(false)
         MainActivity.requestQueue!!.add(request)
-
-        setResult(Activity.RESULT_OK)
-        finish()
     }
 
     private fun postJSON() {

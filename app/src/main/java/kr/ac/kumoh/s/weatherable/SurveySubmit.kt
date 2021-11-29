@@ -17,7 +17,7 @@ import org.json.JSONException
 class SurveySubmit(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "http://192.168.35.193:8080"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
         // "http://192.168.200.176:8080"
         // http://192.168.0.11:8080
     }

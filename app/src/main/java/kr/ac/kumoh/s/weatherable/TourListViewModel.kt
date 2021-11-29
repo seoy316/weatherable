@@ -8,8 +8,6 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
-import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
-import kr.ac.kumoh.s.weatherable.MainActivity.Companion.uid
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
 import kr.ac.kumoh.s.weatherable.SignInActivity.Companion.requestQueue
 import org.json.JSONArray
@@ -21,6 +19,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
 
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
     }
 
     data class TourList(var name: String, var address: String, var distance: String, var tour_x: Double, var tour_y: Double)
@@ -75,7 +74,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
                 params.put("x",x.toString())
                 params.put("y",y.toString())
                 params.put("weatherCode", weatherCode.toString())
-                params.put("uid", uid.toString())
+                params.put("uid", MainActivity.uid.toString())
                 print("params $params")
 
                 return params

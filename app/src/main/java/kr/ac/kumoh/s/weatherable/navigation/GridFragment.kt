@@ -20,17 +20,26 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_grid.view.*
 import kr.ac.kumoh.s.weatherable.R
+import kr.ac.kumoh.s.weatherable.TourListFragment
 
 
 class GridFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
-    var uid: String? = null
-    var auth: FirebaseAuth? = null
+
     private lateinit var mModel: DetailViewModel
     private val mAdapter = DetailAdapter()
 
     companion object {
         const val KEY_ID: String = "review_id"
+        fun newInstance(string: String?): GridFragment {
+            val fragmentGrid = GridFragment()
+//            val args = Bundle()
+//
+//            args.putString("string", string)
+//            fragmentGrid.arguments = args
+
+            return fragmentGrid
+        }
     }
 
     override fun onCreateView(
@@ -52,11 +61,11 @@ class GridFragment : Fragment() {
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
         }
-
         return root
     }
 
     inner class DetailAdapter : RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
+
         open inner class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
             val niImage: NetworkImageView = itemView.findViewById(R.id.image)
 
@@ -68,7 +77,6 @@ class GridFragment : Fragment() {
             override fun onClick(p0: View?) {
                 val detail = Intent(activity, DetailActivity::class.java)
                 detail.putExtra(KEY_ID, mModel.getReview(adapterPosition).postId)
-                print("position? ${mModel.getReview(adapterPosition).postId} ")
                 startActivity(detail)
             }
         }
@@ -85,13 +93,10 @@ class GridFragment : Fragment() {
                 R.layout.item,
                 parent,
                 false)
-
-
             return ViewHolder(view)
         }
 
         inner class CustomViewHolder(var imageview: ImageView) : DetailAdapter.ViewHolder(imageview) { }
-
 
         override fun onBindViewHolder(holder: DetailAdapter.ViewHolder, position: Int) {
             holder.niImage.setImageUrl(mModel.getImageUrl(position), mModel.mLoader)
