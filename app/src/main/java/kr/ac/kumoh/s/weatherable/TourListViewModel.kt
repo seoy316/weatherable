@@ -9,6 +9,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
+import kr.ac.kumoh.s.weatherable.SignInActivity.Companion.requestQueue
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -18,10 +19,10 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
 
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io/"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
     }
 
-    data class TourList(var name: String, var address: String, var distance: String)
+    data class TourList(var name: String, var address: String, var distance: String, var tour_x: Double, var tour_y: Double)
 
     private var mQueue: RequestQueue
     val tour_list = MutableLiveData<ArrayList<TourList>>()
@@ -34,25 +35,30 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
 
     fun postJSON(x: Double?, y:Double?) {
         list_data.clear()
-        val url = SERVER_URL + "distance"
+        val url = SERVER_URL + "/distance"
         val request: StringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
                 try {
                     println("연결 성공")
                     val jsonObject = JSONArray(response)
+                    print("추천리스트 $jsonObject")
                     val dec = DecimalFormat("#.##")
                     for (i in 0 until jsonObject.length()){
                         val item:JSONObject = jsonObject[i] as JSONObject
                         val name = item.getString("name")
+                        print("name 나와라 " + name)
                         val address = item.getString("address")
                         val distance = dec.format(item.getDouble("dist")) + "km"
+                        val tour_x = item.getDouble("x")
+                        val tour_y = item.getDouble("y")
 
                         println("test_name : $name")
                         println("test_adress : $address")
                         println("test_distance : $distance")
 
-                        list_data.add(TourList(name, address, distance))
+                        list_data.add(TourList(name, address, distance,tour_x,tour_y))
+                        print("list check" + list_data)
                         tour_list.value = list_data
                     }
 
@@ -68,6 +74,7 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
                 params.put("x",x.toString())
                 params.put("y",y.toString())
                 params.put("weatherCode", weatherCode.toString())
+                params.put("uid", MainActivity.uid.toString())
                 print("params $params")
 
                 return params
@@ -85,14 +92,4 @@ class TourListViewModel(application: Application): AndroidViewModel(application)
         mQueue.cancelAll(QUEUE_TAG)
     }
 
-//    private fun parseJson(items: JSONArray) {
-//        for (i in 0 until items.length()) {
-//            val item: JSONObject = items[i] as JSONObject
-//            val name = item.getString("name")
-//            val address = item.getString("address")
-//            val distance = item.getString("dist")
-//
-//            list_data.add(TourList(name, address))
-//        }
-//    }
 }

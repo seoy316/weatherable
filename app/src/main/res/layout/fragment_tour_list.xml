@@ -5,20 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="60dp"
-            app:backgroundTint="@color/white"
-            app:fabSize="mini" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -44,12 +34,6 @@
                     android:background="#73ffffff"
                     />
 
-<!--                <com.cooltechworks.views.shimmer.ShimmerRecyclerView-->
-<!--                    android:id="@+id/rvTourList"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    app:shimmer_demo_angle="20"-->
-<!--                    app:shimmer_demo_shimmer_color="#73ffffff" />-->
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

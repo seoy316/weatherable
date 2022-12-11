@@ -13,10 +13,8 @@ import org.json.JSONObject
 class SurveySunnyViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "http://192.168.35.217:8080"
-        // "http://192.168.200.176:8080"
-        // "http://192.168.228.250:8080"
-        // "http://192.168.0.11:8080"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
+
     }
 
     data class SurveySunny(var id: Int, var name: String)
@@ -33,7 +31,7 @@ class SurveySunnyViewModel(application: Application) : AndroidViewModel(applicat
     fun requestSurveySunny() {
         val request = JsonArrayRequest(
             Request.Method.GET,
-            SERVER_URL+"/tag", // SERVER_URL에 테이블 이름을 붙여준다.
+            "$SERVER_URL/tag_place", // SERVER_URL에 테이블 이름을 붙여준다.
             null,
             {
                 survey_sunny_data.clear()

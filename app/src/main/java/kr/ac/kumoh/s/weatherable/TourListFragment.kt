@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s.weatherable
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -21,8 +23,6 @@ import kotlinx.android.synthetic.main.fragment_tour_list.view.*
 class TourListFragment : BottomSheetDialogFragment() {
     private lateinit var mTourListModel: TourListViewModel
     private val mTourListAdapter = TourListAdapter()
-    var tour_list : ShimmerRecyclerView? = null
-    var fabClose: FloatingActionButton? = null
     var x : Double? =  0.0// 경도
     var y : Double? = 0.0// 위도
 
@@ -49,13 +49,8 @@ class TourListFragment : BottomSheetDialogFragment() {
         mTourListModel = ViewModelProvider(activity as AppCompatActivity).get(TourListViewModel::class.java)
         mTourListModel.tour_list.observe(viewLifecycleOwner, Observer<ArrayList<TourListViewModel.TourList>> {mTourListAdapter.notifyDataSetChanged()})
 
-
         val root = inflater.inflate(R.layout.fragment_tour_list, container, false)
         val rvTourList = root.rvTourList
-//        rvTourList?.layoutManager = LinearLayoutManager(activity)
-//        rvTourList?.setHasFixedSize(true)
-//        rvTourList?.adapter = mTourListAdapter
-//        rvTourList?.showShimmerAdapter()
 
         rvTourList.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -64,10 +59,10 @@ class TourListFragment : BottomSheetDialogFragment() {
             adapter = mTourListAdapter
         }
 
-        fabClose = root.findViewById(R.id.fabClose)
-        fabClose?.setOnClickListener {
-            dismiss()
-        }
+//        fabClose = root.findViewById(R.id.fabClose)
+//        fabClose?.setOnClickListener {
+//            dismiss()
+//        }
 
         var bundle = this.arguments
         if (bundle != null) {
@@ -106,7 +101,6 @@ class TourListFragment : BottomSheetDialogFragment() {
                     parent,
                     false
                 )
-
             return ViewHolder(view)
         }
 
@@ -114,6 +108,16 @@ class TourListFragment : BottomSheetDialogFragment() {
             holder.txName.text = mTourListModel.getTourList(position).name
             holder.txAddress.text = mTourListModel.getTourList(position).address
             holder.txDistance.text = mTourListModel.getTourList(position).distance
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(holder.itemView?.context, MapsActivity::class.java)
+                intent.putExtra("tour_x",mTourListModel.getTourList(position).tour_x)
+                intent.putExtra("tour_y",mTourListModel.getTourList(position).tour_y)
+                intent.putExtra("my_x",x)
+                intent.putExtra("my_y",y)
+                intent.putExtra("name",mTourListModel.getTourList(position).name)
+                ContextCompat.startActivity(holder.itemView.context, intent, null)
+            }
         }
     }
 }

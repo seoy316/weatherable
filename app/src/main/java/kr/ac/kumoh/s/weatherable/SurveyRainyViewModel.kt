@@ -14,7 +14,7 @@ import org.json.JSONObject
 class SurveyRainyViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "http://192.168.0.11:8080"
+        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
         // "http://192.168.200.176:8080"
         // http://192.168.0.11:8080
     }
@@ -31,38 +31,10 @@ class SurveyRainyViewModel(application: Application) : AndroidViewModel(applicat
         requestSurveyRainy()
     }
 
-//    fun requestSurveyRainy() {
-//        survey_rainy_data.clear()
-//        val request: StringRequest = object : StringRequest (
-//            Method.GET,
-//            "$SERVER_URL/tag",
-//            Response.Listener { response ->
-//                try {
-//                    val parser = JsonParser()
-//                    val obj: Any = parser.parse(response)
-//                    val jsonObject = obj as JSONArray
-//                    for (i in 0 until jsonObject.length()) {
-//                        val item: JSONObject = jsonObject[i] as JSONObject
-//                        val id = item.getInt("id")
-//                        val title = item.getString("title")
-//
-//                        survey_rainy_data.add(SurveyRainy(id, title))
-//                        survey_rainy_list.value = survey_rainy_data
-//                    }
-//                } catch (e: JSONException) {
-//                    e.printStackTrace()
-//                }
-//            },
-//            Response.ErrorListener { }) {}
-//
-//        request.tag = QUEUE_TAG
-//        mQueue.add(request)
-//    }
-
     fun requestSurveyRainy() {
         val request = JsonArrayRequest(
             Request.Method.GET,
-            "$SERVER_URL/tag", // SERVER_URL에 테이블 이름을 붙여준다.
+            "$SERVER_URL/tag_place", // SERVER_URL에 테이블 이름을 붙여준다.
             null,
             {
                 survey_rainy_data.clear()
