@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s.weatherable
+package kr.ac.kumoh.s.weatherable.rate
 
 import android.app.Application
 import android.widget.Toast
@@ -7,39 +7,37 @@ import androidx.lifecycle.MutableLiveData
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
+import kr.ac.kumoh.s.weatherable.MySingleton
+import kr.ac.kumoh.s.weatherable.SERVER_URL
 import org.json.JSONArray
 import org.json.JSONObject
 
-
-class SurveyCloudyViewModel(application: Application) : AndroidViewModel(application) {
+class SurveySunnyViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
-        // "http://192.168.200.176:8080"
-        // http://192.168.0.11:8080
     }
 
-    data class SurveyCloudy(var id: Int, var name: String)
+    data class SurveySunny(var id: Int, var name: String)
 
     private var mQueue: RequestQueue
-    val survey_cloudy_list = MutableLiveData<ArrayList<SurveyCloudy>>()
-    private val survey_cloudy_data = ArrayList<SurveyCloudy>()
+    val survey_sunny_list = MutableLiveData<ArrayList<SurveySunny>>()
+    private val survey_sunny_data = ArrayList<SurveySunny>()
 
     init {
-        survey_cloudy_list.value = survey_cloudy_data
+        survey_sunny_list.value = survey_sunny_data
         mQueue = MySingleton.getInstance(application).requestQueue
-        requestSurveyCloudy()
+        requestSurveySunny()
     }
 
-    fun requestSurveyCloudy() {
+    fun requestSurveySunny() {
         val request = JsonArrayRequest(
             Request.Method.GET,
-            "$SERVER_URL/tag_place", // SERVER_URL에 테이블 이름을 붙여준다.
+            "${SERVER_URL().url}/places/tag/rate", // SERVER_URL에 테이블 이름을 붙여준다.
             null,
             {
-                survey_cloudy_data.clear()
+                survey_sunny_data.clear()
                 parseJson(it)
-                survey_cloudy_list.value = survey_cloudy_data
+                survey_sunny_list.value = survey_sunny_data
             },
             { Toast.makeText(getApplication(), it.toString(), Toast.LENGTH_LONG).show() }
         )
@@ -48,9 +46,9 @@ class SurveyCloudyViewModel(application: Application) : AndroidViewModel(applica
         mQueue.add(request)
     }
 
-    fun getSurveyCloudy(i: Int) = survey_cloudy_data[i]
+    fun getSurveySunny(i: Int) = survey_sunny_data[i]
 
-    fun getSize() = survey_cloudy_data.size
+    fun getSize() = survey_sunny_data.size
 
     override fun onCleared() {
         super.onCleared()
@@ -63,7 +61,7 @@ class SurveyCloudyViewModel(application: Application) : AndroidViewModel(applica
             val id = item.getInt("id")
             val name = item.getString("title")
 
-            survey_cloudy_data.add(SurveyCloudy(id, name))
+            survey_sunny_data.add(SurveySunny(id, name))
         }
     }
 }

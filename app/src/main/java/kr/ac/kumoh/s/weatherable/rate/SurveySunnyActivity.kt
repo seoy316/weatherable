@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s.weatherable
+package kr.ac.kumoh.s.weatherable.rate
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_survey_sunny.*
+import kr.ac.kumoh.s.weatherable.R
 
 class SurveySunnyActivity : AppCompatActivity() {
     private lateinit var mSurveySunnyModel: SurveySunnyViewModel
@@ -103,7 +104,7 @@ class SurveySunnyActivity : AppCompatActivity() {
             return mSurveySunnyModel.getSize()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurveySunnyAdapter.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = layoutInflater.inflate(
                 R.layout.item_survey_sunny,
                 parent,
@@ -111,7 +112,7 @@ class SurveySunnyActivity : AppCompatActivity() {
             return ViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: SurveySunnyAdapter.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.txName.text = mSurveySunnyModel.getSurveySunny(position).name
 
             tid_list[position] = mSurveySunnyModel.getSurveySunny(position).id
@@ -144,7 +145,7 @@ class SurveySunnyActivity : AppCompatActivity() {
             }
         }
 
-        private fun setRadio(holder: SurveySunnyAdapter.ViewHolder, selection: Int) {
+        private fun setRadio(holder: ViewHolder, selection: Int) {
             if (selection == 1) holder.rgItem1.isChecked = true
             if (selection == 2) holder.rgItem2.isChecked = true
             if (selection == 3) holder.rgItem3.isChecked = true

@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s.weatherable
+package kr.ac.kumoh.s.weatherable.rate
 
 import android.app.Application
 import android.util.Log
@@ -11,15 +11,14 @@ import com.android.volley.toolbox.StringRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import kr.ac.kumoh.s.weatherable.MySingleton
+import kr.ac.kumoh.s.weatherable.SERVER_URL
 import org.json.JSONException
 
 
 class SurveySubmit(application: Application) : AndroidViewModel(application) {
     companion object {
         const val QUEUE_TAG = "VolleyRequest"
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
-        // "http://192.168.200.176:8080"
-        // http://192.168.0.11:8080
     }
 
     private var mQueue: RequestQueue
@@ -45,7 +44,7 @@ class SurveySubmit(application: Application) : AndroidViewModel(application) {
     fun submitSurvey() {
         val response: StringRequest = object : StringRequest(
             Method.POST,
-            SERVER_URL, // SERVER_URL에 테이블 이름을 붙여준다.
+            "${SERVER_URL().url}", // SERVER_URL에 테이블 이름을 붙여준다.
             Response.Listener {
                 try {
                     Toast.makeText(getApplication(), "연결 성공", Toast.LENGTH_LONG).show()
@@ -63,7 +62,6 @@ class SurveySubmit(application: Application) : AndroidViewModel(application) {
                     params.put("tag_id", i.toString())
                     params.put("rating", rainy[i].toString())
                 }
-
                 return params
             }
         }
@@ -79,9 +77,7 @@ class SurveySubmit(application: Application) : AndroidViewModel(application) {
                     document = it.getResult()
                     if (document.exists()) {
                         rainy = document.get("rainyRating") as ArrayList<Int>
-//                        sunny = document.get("sunnyRating") as ArrayList<Int>
                         Log.i("d", "rainy$rainy")
-//                        Log.i("d", "sunny$sunny")
                     }
                 }
             }

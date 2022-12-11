@@ -1,7 +1,6 @@
 package kr.ac.kumoh.s.weatherable
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
@@ -16,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -26,20 +23,22 @@ import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_tour_list.*
+import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_tour_list.*
+import kr.ac.kumoh.s.weatherable.navigation.AddPhotoActivity
+import kr.ac.kumoh.s.weatherable.navigation.*
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
-import kr.ac.kumoh.s.weatherable.navigation.*
-import com.google.firebase.iid.FirebaseInstanceId
 
 class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -50,32 +49,29 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
     lateinit var txt_time: TextView
     private var strDate: String? = null
     lateinit var viewModel: TourListViewModel
-    lateinit var DviewModel: DetailViewModel
+    var auth: FirebaseAuth? = null
+//    var homeFragment = HomeFragment()
 
-    var lon_ : Double = 0.0 // 경도
-    var lat_ : Double = 0.0// 위도
-
-    var storage : FirebaseStorage? = null
-    var auth : FirebaseAuth? = null
-
+    var lon_: Double = 0.0 // 경도
+    var lat_: Double = 0.0// 위도
 
     companion object {
         var requestQueue: RequestQueue? = null
         var weatherCode: Int = 0
-        var weatherString: String? = null
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
-//        const val SERVER_URL = "https://flask-weatherable-wkrtj.run.goorm.io"
-        var f_uid: String? = null
         var uid: String = ""
+        var id: Int = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        homeFragment = supportFragmentManager.findFragmentById(R.id.id_home_fragment) as HomeFragment
 
+//        homeFragment = supportFragmentManager.findFragmentById(R.id.id_home_fragment) as HomeFragment
         auth = FirebaseAuth.getInstance()
-        f_uid = auth?.currentUser?.uid
+        requestUserID()
+        uid = auth!!.currentUser?.uid.toString()
+
+        println("MainActivity start")
 
         txt_date = findViewById(R.id.txt_date)
         txt_time = findViewById(R.id.txt_time)
@@ -92,6 +88,7 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
         val dateNow = Calendar.getInstance().time
         strDate = DateFormat.format("EEE", dateNow) as String
+
 
         val button = findViewById<ImageButton>(R.id.btn)
         button.setOnClickListener { //시간데이터와 날씨데이터 활용
@@ -114,53 +111,63 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
         val bundle = Bundle()
 
-        bundle.putDouble("x",lon_)
-        bundle.putDouble("y",lat_)
+        bundle.putDouble("x", lon_)
+        bundle.putDouble("y", lat_)
+        print("좌표값 $lon_ $lat_")
 
-        uid = intent.getStringExtra("uid").toString()
-        Log.i("d", "GETUID$uid")
+        id = intent.getStringExtra("uid")?.toInt() ?:
+        Log.i("getId", "GETUID$id")
 
         bottom_navigation.selectedItemId = R.id.action_home
-        registerPushToken()
+        //    registerPushToken()
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         setToolbarDefault()
-        when(p0.itemId){
-            R.id.action_home ->{
+        when (p0.itemId) {
+            R.id.action_home -> {
                 var homeFragment = HomeFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content,homeFragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, homeFragment)
+                    .commit()
                 return true
             }
-            R.id.action_search ->{
-                var gridFragment = GridFragment.newInstance("GridFragment")
-                supportFragmentManager.beginTransaction().replace(R.id.main_content,gridFragment).commit()
+            R.id.action_search -> {
+                val gridViewFragment = GridFragment.newInstance("GridFragment")
+//                var gridFragment = GridFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridViewFragment)
+                    .commit()
                 return true
             }
-            R.id.action_add_photo ->{
-                if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                    startActivity(Intent(this,AddPhotoActivity::class.java))
+            R.id.action_add_photo -> {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startActivity(Intent(this, AddPhotoActivity::class.java))
                 }
                 return true
             }
-            R.id.action_recom_list ->{
-
+            R.id.action_recom_list -> {
                 val recomFragment = TourListFragment.newInstance("TourListFragment")
                 val bundle = Bundle()
-                bundle.putDouble("x",lon_)
-                bundle.putDouble("y",lat_)
+                bundle.putDouble("x", lon_)
+                bundle.putDouble("y", lat_)
                 recomFragment.arguments = bundle
-                supportFragmentManager.beginTransaction().replace(R.id.main_content,recomFragment).commit()
+//                var recomFragment = TourListFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, recomFragment)
+                    .commit()
                 return true
             }
-            R.id.action_account ->{
-                var userFragment = UserFragment()
-                var bundle = Bundle()
-                var f_uid = FirebaseAuth.getInstance().currentUser?.uid
+            R.id.action_account -> {
+                val userFragment = UserFragment()
+                val bundle = Bundle()
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-                bundle.putString("destinationUid",f_uid)
+                bundle.putString("destinationUid", uid)
                 userFragment.arguments = bundle
-                supportFragmentManager.beginTransaction().replace(R.id.main_content,userFragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment)
+                    .commit()
                 return true
             }
         }
@@ -170,37 +177,37 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
     private fun setToolbarDefault() {
         toolbar_username.visibility = View.GONE
         toolbar_btn_back.visibility = View.GONE
-        toolbar_title_image.visibility = View.VISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == UserFragment.PICK_PROFILE_FROM_ALBUM && resultCode == RESULT_OK){
-            var imageUri = data?.data
-            var f_uid = FirebaseAuth.getInstance().currentUser?.uid
-            var storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages").child(f_uid!!)
+        if (requestCode == UserFragment.PICK_PROFILE_FROM_ALBUM && resultCode == RESULT_OK) {
+            val imageUri = data?.data
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val storageRef =
+                FirebaseStorage.getInstance().reference.child("userProfileImages").child(uid!!)
             storageRef.putFile(imageUri!!).continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
                 return@continueWithTask storageRef.downloadUrl
             }.addOnSuccessListener { uri ->
-                var map = HashMap<String,Any>()
+                var map = HashMap<String, Any>()
                 map["image"] = uri.toString()
-                FirebaseFirestore.getInstance().collection("profileImages").document(f_uid).set(map)
+                FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
             }
         }
     }
 
-    fun registerPushToken(){
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+/*    fun registerPushToken(){
+            FirebaseAuth.getInstance().addOnCompleteListener {
                 task ->
             val token = task.result?.token
-            val f_uid = FirebaseAuth.getInstance().currentUser?.uid
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
             val map = mutableMapOf<String,Any>()
             map["pushToken"] = token!!
 
-            FirebaseFirestore.getInstance().collection("pushtokens").document(f_uid!!).set(map)
+            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
         }
-    }
+    }*/
 
     private fun getLocation() {
         val lm = getSystemService(LOCATION_SERVICE) as LocationManager
@@ -212,15 +219,22 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 115)
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                115
+            )
             return
         }
 
         when { //프로바이더 제공자 활성화 여부 체크
             isNetworkEnabled -> {
-                val location = provider?.let{ lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) }
-                val lon = location?.longitude!! //전역변수로 하니깐 주소 구하는  AddressChange()여기에서 lat, lon이 사용이 안됨 -> 그래서 CurrentCall()이랑 AddressChange()에 매개변수 전달로 변경함
+                val location =
+                    provider?.let { lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) }
+                val lon =
+                    location?.longitude!! //전역변수로 하니깐 주소 구하는  AddressChange()여기에서 lat, lon이 사용이 안됨 -> 그래서 CurrentCall()이랑 AddressChange()에 매개변수 전달로 변경함
                 val lat = location.latitude
                 lon_ = lon
                 lat_ = lat
@@ -228,7 +242,8 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
                 CurrentCall(lon, lat)
             }
             isGPSEnabled -> { //실내에서 응답안할수도 있움 and GPS 는 에뮬레이터에서는 기본적으로 동작하지 않는다(말이야 방구야)
-                val location = provider?.let{ lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) }
+                val location =
+                    provider?.let { lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) }
                 val lon = location?.longitude!!
                 val lat = location.latitude
                 lon_ = lon
@@ -244,25 +259,28 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         }
     }
 
-    private fun AddressChange(Longitude : Double, Latitude : Double){ //경위도를 주소로 변경하는 함수 매개변수로 경위도 받아서 수행
+    private fun AddressChange(
+        Longitude: Double,
+        Latitude: Double
+    ) { //경위도를 주소로 변경하는 함수 매개변수로 경위도 받아서 수행
         val mGeocoder: Geocoder = Geocoder(this)
         val mResultList: List<Address> = mGeocoder.getFromLocation(Latitude, Longitude, 2)
         Log.d("aaa", "mResultList: $mResultList")
-        if (mResultList.isNotEmpty()){
-            var address = mResultList[0].getAddressLine(0)
-            var add = address.split(" ")
+        if (mResultList.isNotEmpty()) {
+            val address = mResultList[0].getAddressLine(0)
+            val add = address.split(" ")
             var finalAdd = ""
-            for ( i in 1..3)
+            for (i in 1..3)
                 finalAdd += add[i] + " "
             txt_city!!.text = finalAdd
 //                homeFragment.setCity(finalAdd)
         }
     }
 
-    private fun CurrentCall(lon : Double, lat : Double) {
+    private fun CurrentCall(lon: Double, lat: Double) {
 
-        print("CurrentCall 실행")
-        val url = "http://api.openweathermap.org/data/2.5/weather?&lat="+lat+"&lon="+lon+"&appid=45dc56ad4496c90b420cd24f1c7c79d5"
+        val url =
+            "http://api.openweathermap.org/data/2.5/weather?&lat=" + lat + "&lon=" + lon + "&appid=45dc56ad4496c90b420cd24f1c7c79d5"
         val request: StringRequest = object : StringRequest(
             Method.GET, url,
             Response.Listener { response ->
@@ -296,41 +314,34 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
 
                     Log.i("txt_weather", jsonObject.toString())
                     when (strDescWeather) {
-                        "broken clouds", "overcast clouds", "scattered clouds" -> {
+                        "broken clouds", "overcast clouds", "scattered clouds", "few clouds" -> {
                             txt_weather.text = "흐림"
 //                            homeFragment.setWeather("흐림")
                             weatherCode = 2
-                            weatherString = "흐림"
                         }
                         "light rain" -> {
                             txt_weather.text = "약한 비"
                             weatherCode = 3
-                            weatherString = "약한 비"
 //                            homeFragment.setWeather("약한 비")
-
                         }
                         "haze" -> {
                             txt_weather.text = "안개"
                             weatherCode = 2
-                            weatherString = "안개"
 //                            homeFragment.setWeather("안개")
                         }
                         "moderate rain" -> {
                             txt_weather.text = "흐리고 비"
                             weatherCode = 3
-                            weatherString ="흐리고 비"
 //                            homeFragment.setWeather("흐리고 비")
                         }
                         "heavy intensity rain" -> {
                             txt_weather.text = "폭우"
                             weatherCode = 3
-                            weatherString = "폭우"
 //                            homeFragment.setWeather("폭우")
                         }
-                        "clear sky", "few clouds" -> {
+                        "clear sky" -> {
                             txt_weather.text = "맑음"
                             weatherCode = 1
-
 //                            homeFragment.setWeather("맑음")
                         }
                         else -> {
@@ -367,4 +378,44 @@ class MainActivity : AppCompatActivity(), LocationListener, BottomNavigationView
         TODO("Not yet implemented")
     }
 
+    fun requestUserID() {
+        val request: StringRequest = object : StringRequest(
+            Method.POST,
+            "${SERVER_URL().url}/users/uid",
+            Response.Listener { response ->
+                try {
+                    println("post try")
+                    val jsonObject = JSONArray(response)
+                    for (i in 0 until jsonObject.length()) {
+                        val item: JSONObject = jsonObject[i] as JSONObject
+                        val id_ = item.getString("uid")
+
+                        id = id_.toInt()
+
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra("id", id_)
+                        startActivity(intent)
+
+                        ActivityCompat.finishAffinity(this)
+
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            Response.ErrorListener { }) {
+            @Throws(AuthFailureError::class)
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["email"] = auth?.currentUser.toString()
+                println("paramas : $params")
+                return params
+            }
+        }
+
+        request.setShouldCache(false)
+        requestQueue?.add(request)
+
+    }
 }

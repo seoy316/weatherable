@@ -6,11 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
-import android.widget.Toast
 import com.android.volley.AuthFailureError
-import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.common.api.Status
@@ -28,9 +25,8 @@ import kr.ac.kumoh.s.weatherable.navigation.model.ContentDTO
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import kr.ac.kumoh.s.weatherable.MainActivity
 import kr.ac.kumoh.s.weatherable.MainActivity.Companion.weatherCode
-import kr.ac.kumoh.s.weatherable.MySingleton
+import kr.ac.kumoh.s.weatherable.SERVER_URL
 import org.json.JSONException
-import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,11 +54,6 @@ class AddPhotoActivity : AppCompatActivity() {
     var uid: String? = null
     var weather : String? = null
     var place : String? = null
-
-
-    companion object{
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -214,7 +205,7 @@ class AddPhotoActivity : AppCompatActivity() {
     private fun uploadPosting() {
 
         val request: StringRequest = object : StringRequest(
-            Method.POST, "$SERVER_URL/reviews_post",
+            Method.POST, "${SERVER_URL().url}/story/insert",    // 포스팅
             Response.Listener { response ->
                 try {
                     println("연결 성공")
@@ -247,7 +238,7 @@ class AddPhotoActivity : AppCompatActivity() {
     }
 
     private fun postJSON() {
-        val url = SERVER_URL + "send_review"
+        val url = "${SERVER_URL().url}/story/post"
         val request: StringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->

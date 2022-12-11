@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s.weatherable
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +28,6 @@ class LogInActivity : AppCompatActivity() {
 
     companion object {
         var requestQueue: RequestQueue? = null
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,6 @@ class LogInActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
-//        val setData = SetData()
 
         val btn_LogIn = findViewById<Button>(R.id.btn_LogIn)
         val btn_signIn = findViewById<Button>(R.id.btn_signIn)
@@ -49,7 +48,8 @@ class LogInActivity : AppCompatActivity() {
 
 
         btn_LogIn.setOnClickListener {
-
+//            Log.i("d", "EMAIL$email")
+//            Log.i("d", "PASSWORD$password")
             val email = edt_Email.text.toString()
             email_ = edt_Email.text.toString()
 
@@ -99,7 +99,7 @@ class LogInActivity : AppCompatActivity() {
 //        println("post email : $email_")
         val request: StringRequest = object : StringRequest(
             Method.POST,
-            "${SERVER_URL}/user_post",
+            "${SERVER_URL().url}/users/uid",
             Response.Listener { response ->
                 try {
                     println("post try")
@@ -108,7 +108,6 @@ class LogInActivity : AppCompatActivity() {
                         val item: JSONObject = jsonObject[i] as JSONObject
                         val id = item.getString("id")
 
-                        //
                         user_id_ = id
 
                         println("id_ : $user_id_")
@@ -141,5 +140,4 @@ class LogInActivity : AppCompatActivity() {
         requestQueue?.add(request)
     }
 }
-
 

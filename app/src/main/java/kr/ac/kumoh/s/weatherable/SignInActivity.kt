@@ -1,6 +1,5 @@
 package kr.ac.kumoh.s.weatherable
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -17,6 +16,7 @@ import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import kr.ac.kumoh.s.weatherable.rate.SurveyRainyActivity
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -26,7 +26,6 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
 
-
     val logIn = LogInActivity()
 
     lateinit var email_ : String
@@ -35,7 +34,7 @@ class SignInActivity : AppCompatActivity() {
 
     companion object {
         var requestQueue: RequestQueue? = null
-        const val SERVER_URL = "https://weatherable-flask-lhavr.run.goorm.io"
+        val SERVER_URL = "https://weatherable-flask-psgys.run.goorm.io"
     }
 
 
@@ -43,9 +42,13 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
+        print("회원가입 액티비티")
+        println(SERVER_URL())
+        println(SERVER_URL().url)
+        println(SERVER_URL().url.toString())
+
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
-
 
         val edt_Email = findViewById<EditText>(R.id.edt_Email)
         val edt_Password = findViewById<EditText>(R.id.edt_Password)
@@ -107,7 +110,6 @@ class SignInActivity : AppCompatActivity() {
                     requestUserID()
 
 
-
 //                    val intent = Intent(this, SurveyRainyActivity::class.java)
 //                    intent.putExtra("email", user!!.email.toString())
 //                    startActivity(intent)
@@ -138,7 +140,7 @@ class SignInActivity : AppCompatActivity() {
 //        println("post email : $email_")
         val request: StringRequest = object : StringRequest(
             Method.POST,
-            "${SERVER_URL}/user",
+            "${SERVER_URL().url}/users/sign-in",
             Response.Listener { response ->
                 try {
                     println("post try")

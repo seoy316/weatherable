@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s.weatherable
+package kr.ac.kumoh.s.weatherable.rate
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_survey_rainy.*
+import kr.ac.kumoh.s.weatherable.R
 
 
 class SurveyRainyActivity : AppCompatActivity() {
@@ -50,7 +51,8 @@ class SurveyRainyActivity : AppCompatActivity() {
             requestQueue = Volley.newRequestQueue(applicationContext)
         }
 
-        mSurveyRainyModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(SurveyRainyViewModel::class.java)
+        mSurveyRainyModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(
+            SurveyRainyViewModel::class.java)
 
         mSurveyRainyModel.survey_rainy_list.observe(this, Observer<ArrayList<SurveyRainyViewModel.SurveyRainy>>{
             mSurveyRainyAdapter.notifyDataSetChanged()
@@ -97,7 +99,7 @@ class SurveyRainyActivity : AppCompatActivity() {
             return mSurveyRainyModel.getSize()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurveyRainyAdapter.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = layoutInflater.inflate(
                 R.layout.item_survey_rainy,
                 parent,
@@ -105,7 +107,7 @@ class SurveyRainyActivity : AppCompatActivity() {
             return ViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: SurveyRainyAdapter.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.txName.text = mSurveyRainyModel.getSurveyRainy(position).name
 
             tid_list[position] = mSurveyRainyModel.getSurveyRainy(position).id
@@ -137,7 +139,7 @@ class SurveyRainyActivity : AppCompatActivity() {
             }
         }
 
-        private fun setRadio(holder: SurveyRainyAdapter.ViewHolder, selection: Int) {
+        private fun setRadio(holder: ViewHolder, selection: Int) {
             if (selection == 1) holder.rgItem1.isChecked = true
             if (selection == 2) holder.rgItem2.isChecked = true
             if (selection == 3) holder.rgItem3.isChecked = true

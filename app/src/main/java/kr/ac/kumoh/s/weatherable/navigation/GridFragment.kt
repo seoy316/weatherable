@@ -10,34 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.toolbox.NetworkImageView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_grid.view.*
 import kr.ac.kumoh.s.weatherable.R
-import kr.ac.kumoh.s.weatherable.TourListFragment
 
 
 class GridFragment : Fragment() {
-    var firestore: FirebaseFirestore? = null
-
-    private lateinit var mModel: DetailViewModel
-    private val mAdapter = DetailAdapter()
+    private lateinit var mModel: GridViewModel
+    private val mAdapter = GridAdapter()
 
     companion object {
-        const val KEY_ID: String = "review_id"
+        const val KEY_ID: String = "post-id"
         fun newInstance(string: String?): GridFragment {
             val fragmentGrid = GridFragment()
-//            val args = Bundle()
-//
-//            args.putString("string", string)
-//            fragmentGrid.arguments = args
-
             return fragmentGrid
         }
     }
@@ -48,8 +36,8 @@ class GridFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        mModel = ViewModelProvider(activity as AppCompatActivity).get(DetailViewModel::class.java)
-        mModel.list.observe(viewLifecycleOwner, Observer<ArrayList<DetailViewModel.review>> {
+        mModel = ViewModelProvider(activity as AppCompatActivity).get(GridViewModel::class.java)
+        mModel.list.observe(viewLifecycleOwner, {
             mAdapter.notifyDataSetChanged()
         })
 
@@ -64,7 +52,7 @@ class GridFragment : Fragment() {
         return root
     }
 
-    inner class DetailAdapter : RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
+    inner class GridAdapter : RecyclerView.Adapter<GridAdapter.ViewHolder>() {
 
         open inner class ViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
             val niImage: NetworkImageView = itemView.findViewById(R.id.image)
@@ -88,7 +76,7 @@ class GridFragment : Fragment() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): DetailAdapter.ViewHolder {
+        ): GridAdapter.ViewHolder {
             val view = layoutInflater.inflate(
                 R.layout.item,
                 parent,
@@ -96,16 +84,15 @@ class GridFragment : Fragment() {
             return ViewHolder(view)
         }
 
-        inner class CustomViewHolder(var imageview: ImageView) : DetailAdapter.ViewHolder(imageview) { }
+        inner class CustomViewHolder(var imageview: ImageView) : GridAdapter.ViewHolder(imageview) { }
 
-        override fun onBindViewHolder(holder: DetailAdapter.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.niImage.setImageUrl(mModel.getImageUrl(position), mModel.mLoader)
-
-
+/*            var imageview = (holder as CustomViewHolder).imageview
+            Glide.with(holder.itemView.context).load(mModel.getImageUrl(position)).apply(
+                RequestOptions().centerCrop()).into(imageview)*/
         }
-
     }
-
 }
 
 

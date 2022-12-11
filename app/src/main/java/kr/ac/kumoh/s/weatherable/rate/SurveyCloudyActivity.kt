@@ -1,4 +1,4 @@
-package kr.ac.kumoh.s.weatherable
+package kr.ac.kumoh.s.weatherable.rate
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_survey_cloudy.*
+import kr.ac.kumoh.s.weatherable.MainActivity
+import kr.ac.kumoh.s.weatherable.R
 
 
 class SurveyCloudyActivity : AppCompatActivity() {
@@ -47,7 +49,8 @@ class SurveyCloudyActivity : AppCompatActivity() {
             requestQueue = Volley.newRequestQueue(applicationContext)
         }
 
-        mSurveyCloudyModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(SurveyCloudyViewModel::class.java)
+        mSurveyCloudyModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(
+            SurveyCloudyViewModel::class.java)
 
         mSurveyCloudyModel.survey_cloudy_list.observe(this, Observer<ArrayList<SurveyCloudyViewModel.SurveyCloudy>>{
             mSurveyCloudyAdapter.notifyDataSetChanged()
@@ -104,7 +107,7 @@ class SurveyCloudyActivity : AppCompatActivity() {
             return mSurveyCloudyModel.getSize()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurveyCloudyAdapter.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = layoutInflater.inflate(
                 R.layout.item_survey_cloudy,
                 parent,
@@ -112,7 +115,7 @@ class SurveyCloudyActivity : AppCompatActivity() {
             return ViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: SurveyCloudyAdapter.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.txName.text = mSurveyCloudyModel.getSurveyCloudy(position).name
 
             tid_list[position] = mSurveyCloudyModel.getSurveyCloudy(position).id
@@ -144,7 +147,7 @@ class SurveyCloudyActivity : AppCompatActivity() {
             }
         }
 
-        private fun setRadio(holder: SurveyCloudyAdapter.ViewHolder, selection: Int) {
+        private fun setRadio(holder: ViewHolder, selection: Int) {
             if (selection == 1) holder.rgItem1.isChecked = true
             if (selection == 2) holder.rgItem2.isChecked = true
             if (selection == 3) holder.rgItem3.isChecked = true

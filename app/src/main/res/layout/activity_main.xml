@@ -12,82 +12,8 @@
         android:name="kr.ac.kumoh.s.weatherable.navigation.HomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-<!--        <LinearLayout-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="100dp"-->
-<!--            android:layout_marginTop="0dp"-->
-<!--            android:orientation="vertical">-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:paddingTop="20dp">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txt_city"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    android:drawablePadding="10dp"-->
-<!--                    android:text="구미시"-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="30sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txt_temp"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginTop="10dp"-->
-<!--                    android:text="30"-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="50sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txt_weather"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginTop="10dp"-->
-<!--                    android:text="맑음"-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="34sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txt_date"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:paddingTop="10dp"-->
-<!--                    android:text="2021.06.01"-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="28sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txt_time"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:paddingTop="5dp"-->
-<!--                    android:text="현재 시간"-->
-<!--                    android:textColor="@android:color/black"-->
-<!--                    android:textSize="28sp" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btn"-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_gravity="right" />-->
-<!--            </LinearLayout>-->
-<!--        </LinearLayout>-->
     </fragment>
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -95,6 +21,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -111,14 +38,10 @@
                 android:id="@+id/toolbar_username"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
-
-            <ImageView
-                android:id="@+id/toolbar_title_image"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/logo_title"/>
         </RelativeLayout>
+
     </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:id="@+id/toolbar_division"
         android:background="@color/colorDivision"
@@ -150,20 +73,11 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         app:menu="@menu/bottom_navigation_main"
-        >
+        app:itemIconTint="@drawable/menu_selector_color"
+        app:itemTextColor="@drawable/menu_selector_color">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-
-<!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
-<!--        android:id="@+id/fabPlaceList"-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:layout_margin="16dp"-->
-<!--        android:gravity="center_vertical|center_horizontal"-->
-<!--        android:text="추천 리스트"-->
-<!--        app:iconTint="@android:color/white" />-->
 
 </RelativeLayout>

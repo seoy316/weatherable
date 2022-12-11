@@ -9,16 +9,16 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.NetworkImageView
-import kr.ac.kumoh.s.weatherable.MainActivity.Companion.SERVER_URL
 import kr.ac.kumoh.s.weatherable.MySingleton
 import kr.ac.kumoh.s.weatherable.R
+import kr.ac.kumoh.s.weatherable.SERVER_URL
 import org.json.JSONArray
 import org.json.JSONObject
 
 class DetailActivity: AppCompatActivity() {
 
     companion object {
-        const val QUEUE_TAG = "DetailRequest"
+        const val QUEUE_TAG = "GridRequest"
     }
 
     private lateinit var mQueue: RequestQueue
@@ -42,7 +42,7 @@ class DetailActivity: AppCompatActivity() {
     fun getReview(postId: String?) {
         val request = JsonArrayRequest(
             Request.Method.GET,
-            "$SERVER_URL/reviews_get/postId?id=$postId",
+            "${SERVER_URL().url}/story/read/post-id?id=$postId",
             null,
             { parseReview(it) },
             { Toast.makeText(getApplication(), it.toString(), Toast.LENGTH_LONG).show() }
@@ -54,10 +54,11 @@ class DetailActivity: AppCompatActivity() {
     private fun parseReview(items: JSONArray) {
         val item: JSONObject = items[0] as JSONObject
         val time_ = item.getString("time_")
-        val image = item.getString("image")
-        val weather = item.getString("weather")
         val content = item.getString("content")
+        val weather = item.getString("weather")
         val place = item.getString("place")
+        val image = item.getString("image")
+
 
         val imageView = findViewById<NetworkImageView>(R.id.detailviewitem_imageview_content)
         imageView.setImageUrl(image, mLoader)
