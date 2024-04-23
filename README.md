@@ -22,10 +22,14 @@
 
 ## 실행 화면
 ### 회원 선호도 조사 
-  ![선호도조사](https://github.com/seoy316/weatherable/blob/main/img/선호도조사폼.png) <br>
+![선호도조사](https://github.com/seoy316/weatherable/blob/main/img/선호도조사폼.png) <br>
+
+### 추천리스트
+![추천리스트](https://github.com/seoy316/weatherable/blob/main/img/추천리스트.png) <br>
 
 ### 게시글 작성 
 ![게시글작성](https://github.com/seoy316/weatherable/blob/main/img/게시글작성.png) <br>
+
 
 <br>
 
